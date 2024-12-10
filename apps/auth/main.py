@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.common.infrastructure.config.database.init_db import create_tables
-
+from src.auth.infrastructure.routes.auth_routes import auth_router
+from src.user.infrastructure.routes.user_routes import user_routes
 async def lifespan(app:FastAPI):
     print('initializing DB at start')
     try:
@@ -18,10 +19,12 @@ app = FastAPI(
     #on_startup='',
     #on_shutdown='',
     #middleware='',
-    lifespan= lifespan
-    
+    lifespan= lifespan,
 )
 
-@app.get("/health")
+app.include_router(auth_router)
+app.include_router(user_routes)
+
+@app.get("/health",tags=["health"])
 def healthcheck():
     return {'state': 'Running'}
