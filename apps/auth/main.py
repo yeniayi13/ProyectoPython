@@ -12,13 +12,13 @@ async def lifespan(app:FastAPI):
     
 
 app = FastAPI(
-    #title='',
-    #description='',
-    #version='',
+    title='AuthService',
+    description='This service isin charfe of authenticated users of the platform',
+    version='1.0',
     #on_startup='',
     #on_shutdown='',
     #middleware='',
-    #lifespan= lifespan
+    lifespan= lifespan
     
 )
 

@@ -1,17 +1,23 @@
-from sqlalchemy import DateTime, String, Integer, column
-from user.application.models.user import User
+from sqlalchemy import CheckConstraint, Column, Date, Integer, String
 from src.common.infrastructure.config.database.database import Base
 
-class User_base(Base, User):
-    __table_name__ = "users"
-    
-    id = column(String(150), primay_key = True)
-    name = column(String(30))
-    last_name = column(String(30))
-    ci = column(String(8))
-    username =column(String(30))
-    email = column(String(50))
-    pasword = column(String(250))
-    role = column(String(10))
-    created_at = column(DateTime)
-    updated_at = column(DateTime)
+class User(Base):
+    __tablename__='users'
+    id = Column(String(250), primary_key = True)
+    first_name = Column(String(50),nullable = False)
+    last_name = Column(String(50),nullable = False)
+    c_i = Column(String(10), nullable=False)
+    username = Column(String(50),nullable = False)
+    email = Column(String(50), unique= True, nullable = False)
+    password = Column(String(250), nullable= False)
+    role= Column(
+        String(10),
+        CheckConstraint(
+            "role IN ('SUPERADMIN', 'MANAGER','CLIENT')",
+            name='role_check'
+        ),nullable= False, 
+    )
+    created_at = Column(Date, nullable=False)
+    updated_at = Column(Date)
+
+
