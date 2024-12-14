@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from src.common.infrastructure.config.database.init_db import create_tables
 from src.auth.infrastructure.routes.auth_routes import auth_router
 from src.user.infrastructure.routes.user_routes import user_routes
+
 async def lifespan(app:FastAPI):
     print('initializing DB at start')
     try:

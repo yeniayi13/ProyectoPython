@@ -1,0 +1,22 @@
+services:
+
+  auth_DB:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=auth
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=alfonsoasadev@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - "81:80"  # Fixed syntax: added a space after the dash
+    depends_on:
+      - auth_DB
