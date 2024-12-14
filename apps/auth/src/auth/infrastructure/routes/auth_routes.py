@@ -1,3 +1,6 @@
+from src.auth.application.commands.create_manager.types.create_manager_dto import Create_manager_dto
+from src.auth.application.commands.create_manager.create_manager_service import Create_manager_service
+from src.auth.infrastructure.routes.entries.create_manager_dto import Create_manager_entry
 from src.auth.application.commands.sign_up.types.sign_up_dto import Sign_up_dto
 from src.auth.application.commands.sign_up.sign_up_service import Sign_up_service
 from src.auth.application.commands.log_in.log_in_service import Log_in_service
@@ -36,3 +39,13 @@ async def log_in(entry:log_in_entry, session: Session = Depends(get_db) ):
         auth_handler=JWT_auth_handler())
     result = await service.execute(dto)
     return {'token':result}
+
+
+@auth_router.post('/create_manager', status_code=201)
+async def create_manager(entry:Create_manager_entry, session: Session = Depends(get_db)):
+    role = Roles.MANAGER
+    dto = Create_manager_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
+                username=entry.username,email=entry.email, password=entry.password, role=role)
+    service:ApplicationService = Create_manager_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
+    response = await service.execute(dto)
+    return response

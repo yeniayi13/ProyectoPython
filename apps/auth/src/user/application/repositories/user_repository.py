@@ -14,4 +14,7 @@ class User_repository(ABC):
     @abstractmethod
     def user_exists(email:str):
         pass
-    
+
+    @abstractmethod
+    def create_manager(user):
+        pass
