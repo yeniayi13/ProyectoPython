@@ -26,3 +26,7 @@ class User_repository(ABC):
     @abstractmethod
     def modify_client(id:str,user):
         pass
+    
+    @abstractmethod
+    def find_managers():
+        pass

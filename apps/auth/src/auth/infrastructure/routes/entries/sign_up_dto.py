@@ -1,5 +1,4 @@
-import re
-from pydantic   import BaseModel, EmailStr, Field, field_validator
+from pydantic   import BaseModel, EmailStr, Field
 
 class Sign_up_dto(BaseModel):
      first_name: str =  Field(...,min_length=2, max_length=30)

@@ -57,8 +57,8 @@ class User_postgres_repository(Base_repository,User_repository,):
 
     async def create_manager(self, user):
             try:
-                if (await self.count_roles('MANAGER') > 4 ):
-                    return {'code':409,'msg':'There are already the max amount of managers in the system'}
+                #if (await self.count_roles('MANAGER') > 4 ):
+                #    return {'code':409,'msg':'There are already the max amount of managers in the system'}
 
                 new_user = User(**user.model_dump( exclude_none=True ) )
 
@@ -81,8 +81,8 @@ class User_postgres_repository(Base_repository,User_repository,):
 
     async def create_superadmin(self, user:User_in_create):
                 try:
-                    if (await self.count_roles('SUPERADMIN') > 1 ):
-                        return {'code':409,'msg':'There are already the max amount of SUPERADMINS in the system'}
+                   # if (await self.count_roles('SUPERADMIN') > 1 ):
+                   #     return {'code':409,'msg':'There are already the max amount of SUPERADMINS in the system'}
     
                     new_user = User(**user.model_dump( exclude_none=True ) )
     
@@ -126,3 +126,23 @@ class User_postgres_repository(Base_repository,User_repository,):
                     print('duplicate username')
                     return {'code':409,'msg':'username already associated to a client'}
                 raise e  # Re-raise the error if it's something else
+            
+
+
+    async def find_managers(self):
+        try:
+            managers =  self.session.query(User).\
+                    filter(User.role == 'MANAGER').all()
+            return managers
+        except Exception as e:
+            raise e            
+        
+    async def is_manager(self,id:str) -> bool:
+        try:
+            user =  await self.find_user(identification=id)
+            print(user.role)
+            if user.role == 'MANAGER':
+                return True
+            return False
+        except Exception as e:
+             raise e

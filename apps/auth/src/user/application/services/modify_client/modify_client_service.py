@@ -2,7 +2,7 @@ from datetime import datetime
 from src.user.application.schemas.user_schermas import User_in_modify
 from src.common.application.application_services import ApplicationService
 from src.user.application.repositories.user_repository import User_repository
-from src.user.application.services.types.modify_client_dto import Modify_client_dto
+from src.user.application.services.modify_client.types.modify_client_dto import Modify_client_dto
 
 class Modify_client_service(ApplicationService):
 

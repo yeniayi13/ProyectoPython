@@ -28,3 +28,9 @@ class User_in_modify(BaseModel):
     username:Union[str,None] = Field(default= None)
     email:Union[EmailStr,None] = Field(default= None)
     updated_at:datetime = Field(default= None)
+
+
+class User_in_Response(BaseModel):
+    id:str
+    name:str
+    username:str
