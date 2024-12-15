@@ -1,4 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from src.common.infrastructure.config.database.database import get_db
+from src.user.application.services.modify_client_service import Modify_client_service
+from src.user.application.services.types.modify_client_dto import Modify_client_dto
+from src.user.infrastructure.repositories.user_postgres_repository import User_postgres_repository
+from src.user.infrastructure.routes.entries.modify_client_entry import Modify_client_entry
+from sqlalchemy.orm import Session
 
 user_routes = APIRouter(
     prefix='/users',
@@ -11,9 +18,20 @@ def delete_client(id):
     return {'route': f'delete client  {id}'}
 
 
-@user_routes.put('/client/:id',tags=['client'])
-def modify_client(id):
-    return {'route':f'modify user {id}'}
+@user_routes.patch('/client/:id',tags=['client'])   
+async def modify_client(id:str, body: Modify_client_entry, session: Session = Depends(get_db)):
+    #print(body)
+    
+    dto = Modify_client_dto(id=id,first_name= body.first_name,last_name= body.last_name,
+                       c_i= body.c_i, username= body.username, email= body.email)
+    service = Modify_client_service(user_repository= User_postgres_repository(session))
+    response = await service.execute(dto)
+    return response
+    
+    #body2 = body.model_dump(exclude_unset=True)
+    #print(body)
+    #body2['id'] = id
+    #return {'body':body2 }
 
 
 @user_routes.get('/client/:id',tags=['client'])
@@ -31,9 +49,6 @@ def create_client():
 
 
 
-@user_routes.post('/manager/create', tags=['manager'])
-def create_manager():
-    return {'route': 'create_manager'}
 
 @user_routes.delete('/manager/:id', tags=['manager'])
 def delete_manager(id):

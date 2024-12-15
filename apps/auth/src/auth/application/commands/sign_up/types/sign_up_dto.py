@@ -4,7 +4,6 @@ from src.user.application.models.user import Roles
 
 
 class Sign_up_dto(BaseModel):
-    id: Optional[str] = Field(default='')
     first_name:str
     last_name:str
     c_i:str

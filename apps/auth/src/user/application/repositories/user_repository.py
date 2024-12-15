@@ -22,3 +22,7 @@ class User_repository(ABC):
     @abstractmethod
     def create_superadmin(user):
         pass
+    
+    @abstractmethod
+    def modify_client(id:str,user):
+        pass
