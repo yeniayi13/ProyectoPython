@@ -1,3 +1,5 @@
+from src.auth.application.commands.create_superadmin.create_superadmin_service import Create_superadmin_service
+from src.auth.infrastructure.routes.entries.create_superadmin_entry import Create_superadmin_entry
 from src.auth.application.commands.create_manager.types.create_manager_dto import Create_manager_dto
 from src.auth.application.commands.create_manager.create_manager_service import Create_manager_service
 from src.auth.infrastructure.routes.entries.create_manager_dto import Create_manager_entry
@@ -47,5 +49,14 @@ async def create_manager(entry:Create_manager_entry, session: Session = Depends(
     dto = Create_manager_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
     service:ApplicationService = Create_manager_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
+    response = await service.execute(dto)
+    return response
+
+@auth_router.post('/create_superadmin', status_code=201)
+async def create_superadmin(entry:Create_superadmin_entry, session: Session = Depends(get_db)):
+    role = Roles.SUPERADMIN
+    dto = Create_manager_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
+                username=entry.username,email=entry.email, password=entry.password, role=role)
+    service:ApplicationService = Create_superadmin_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
     response = await service.execute(dto)
     return response

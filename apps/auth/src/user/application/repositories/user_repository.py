@@ -18,3 +18,7 @@ class User_repository(ABC):
     @abstractmethod
     def create_manager(user):
         pass
+    
+    @abstractmethod
+    def create_superadmin(user):
+        pass
