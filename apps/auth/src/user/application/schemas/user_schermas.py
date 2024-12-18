@@ -30,7 +30,10 @@ class User_in_modify(BaseModel):
     updated_at:datetime = Field(default= None)
 
 
-class User_in_Response(BaseModel):
+class User_in_response(BaseModel):
     id:str
     name:str
     username:str
+    c_i:str
+    username: str
+    email: str

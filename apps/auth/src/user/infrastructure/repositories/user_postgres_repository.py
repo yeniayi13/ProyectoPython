@@ -1,31 +1,44 @@
-from src.user.application.schemas.user_schermas import User_in_create, User_in_modify
+from src.common.utils.result import Result
+from src.user.application.schemas.user_schermas import User_in_create, User_in_modify, User_in_response
 from src.common.infrastructure.config.database.postgres_base_repository import Base_repository
 from src.user.application.repositories.user_repository import User_repository
 from src.user.infrastructure.models.user import User
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
+from src.common.utils.errors import Error
 
 
-class User_postgres_repository(Base_repository,User_repository,):
+class User_postgres_repository(Base_repository,User_repository):
 
-    async  def create_user(self, user:User_in_create):
+    async  def create_user(self, user:User_in_create) -> User_in_response:
         try:
             new_user = User(**user.model_dump( exclude_none=True ) )
             
             if not new_user:
+                Result.failure(Error('UserNotCreated','A problem was found while creating a new user',500))
                 return {'code':500, 'msg':'A problem was found while creating a new user'}
             
             self.session.add(instance=new_user)
             self.session.commit()
             self.session.refresh(instance=new_user)
+
+            response = User_in_response(id= new_user.id, 
+                                        name= f'{new_user.first_name} {new_user.last_name}',
+                                        username= new_user.username,
+                                        c_i= new_user.c_i, email= new_user.email
+                                        )
             
-            return new_user
+            
+            return Result.success(response)#new_user
         except IntegrityError as e:
+
            # if 'duplicate key value violates unique constraint' in str(e):
             if 'duplicate key value violates unique constraint "users_c_i_key"' in str(e):
-                return {'code':409,'msg':'C.I already associated to a User'}
+                return Result.failure(Error('CI_AlreadyInSystem','C.I already associated to a User',409))
+                #return {'code':409,'msg':'C.I already associated to a User'}
             if 'duplicate key value violates unique constraint "users_username_key"' in str(e):
-                return {'code':409,'msg':'username already associated to a user'}
+                return Result.failure(Error('UsernameAlreadyInSystem','Username already associated to a User',409))
+                #return {'code':409,'msg':'username already associated to a user'}
             raise e  # Re-raise the error if it's something else
 
     async def user_exists(self,email:str) -> bool:
@@ -125,6 +138,9 @@ class User_postgres_repository(Base_repository,User_repository,):
                 if 'duplicate key value violates unique constraint "users_username_key"' in str(e):
                     print('duplicate username')
                     return {'code':409,'msg':'username already associated to a client'}
+                if 'duplicate key value violates unique constraint "users_email_key"' in str(e):
+                    print('duplicate username')
+                    return {'code':409,'msg':'email already associated to a client'}
                 raise e  # Re-raise the error if it's something else
             
 

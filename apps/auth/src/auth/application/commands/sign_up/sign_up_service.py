@@ -1,3 +1,4 @@
+from src.common.utils.result import Result
 from src.user.application.schemas.user_schermas import User_in_create
 from src.common.application.ports.hash_helper import Hash_helper
 from src.common.application.application_services import ApplicationService
@@ -31,8 +32,12 @@ class Sign_up_service(ApplicationService):
                                  )
         if (await self.user_repository.user_exists(dto.email)):
             return {'code':409,'msg':'Email already associated with a user'}
-        response =  await self.user_repository.create_user(user)
-        return response   
+        response:Result =  await self.user_repository.create_user(user)
+        type(response)
+        print(response)
+        if response.is_error():
+            return response.get_error_message()
+        return response.result()   
     
 
      #result = {

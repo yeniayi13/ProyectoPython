@@ -1,10 +1,27 @@
 services:
+  auth-service:
+    container_name: auth
+    build: .
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      POSTGRES_USER: ${POSTGRES_USER}
+      PASSWORD: ${PASSWORD}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DATABASE: ${DATABASE}
+    depends_on:
+      - auth_DB    
 
   auth_DB:
     image: postgres:15-alpine
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - DATABASE_HOST=localhost
       - POSTGRES_USER=user
@@ -17,6 +34,6 @@ services:
       - PGADMIN_DEFAULT_EMAIL=alfonsoasadev@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=password
     ports:
-      - "81:80"  # Fixed syntax: added a space after the dash
+      - "81:80" 
     depends_on:
       - auth_DB

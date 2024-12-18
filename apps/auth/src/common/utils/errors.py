@@ -1,6 +1,6 @@
-import enum
+from enum import Enum
 
-class Stages(enum):
+class Stages(Enum):
     DOMAIN = 'Domain'
     APPLICATION = 'Application'
     INFRASTRUCTURE = 'Infrastructure'
