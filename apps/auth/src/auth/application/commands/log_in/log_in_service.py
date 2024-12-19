@@ -1,9 +1,11 @@
+from src.common.utils.result import Result
 from src.common.application.ports.auth_handler import Auth_handler
 from src.common.application.ports.hash_helper import Hash_helper
 from src.user.application.repositories.user_repository import User_repository
 from src.common.application.application_services import ApplicationService
 from src.auth.application.commands.log_in.types.log_in_dto import Log_in_dto 
 from src.auth.application.commands.log_in.types.log_in_response import Log_in_response
+from src.common.utils.errors import Error
 
 class Log_in_service[log_in_dto,log_in_response](ApplicationService):
     
@@ -20,9 +22,9 @@ class Log_in_service[log_in_dto,log_in_response](ApplicationService):
 
 
     
-    async def execute(self,dto: Log_in_dto) -> Log_in_response :
+    async def execute(self,dto: Log_in_dto) -> Result[str] :
         if not(await self.user_repository.user_exists(dto.user)):
-           return {'code':409,'msg':'This user does not exist'}
+           return  Result.failure(Error('UserNotFound','This user does not exist in the system',404))
         
         
         response = await self.user_repository.find_user(dto.user)
@@ -32,16 +34,8 @@ class Log_in_service[log_in_dto,log_in_response](ApplicationService):
         if(self.hash_helper.verify_password(dto.password, user.password)):
             token = self.auth_handler.sign(user.id, user.role)
             
-            if token: return token
+            if token: return Result.success(token)
             
-            return {
-            'code':500,
-            "error": "Internal Error",
-            "error_description": "It was a problem while signing the token"
-            } 
-        return {
-            'code':401,
-            "error": "invalid_token",
-            "error_description": "Check your credentials"
-            }
+            return  Result.failure(Error('Internal Error','It was a problem while signing the token',500))  
+        return Result.failure(Error('InvalidToken','Check your credentials',401))
         

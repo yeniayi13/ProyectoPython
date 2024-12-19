@@ -45,7 +45,7 @@ async def sign_up(entry:sign_up_entry, response:Response, session: Session = Dep
 
 
 @auth_router.post('/log_in',status_code=200)
-async def log_in(entry:log_in_entry, session: Session = Depends(get_db) ):
+async def log_in(entry:log_in_entry,response:Response, session: Session = Depends(get_db) ):
     dto =Log_in_dto(user= entry.user, password = entry.password)
     service = Log_in_service(
         user_repository = User_postgres_repository(session), 
@@ -53,7 +53,12 @@ async def log_in(entry:log_in_entry, session: Session = Depends(get_db) ):
         auth_handler=JWT_auth_handler())
     result = await service.execute(dto)
     
-    return {'token':result}
+    if result.is_error():
+        response.status_code = result.error.code
+        return {'msg': result.get_error_message() }
+    
+    
+    return {'token':result.result()}
 
 
 @auth_router.post('/create_manager', status_code=201,responses={
