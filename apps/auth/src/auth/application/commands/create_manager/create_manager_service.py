@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 from src.common.utils.result import Result
-from src.user.application.schemas.user_schermas import User_in_create
+from src.user.application.schemas.user_schermas import User_in_create, User_in_response
 from src.auth.application.commands.create_manager.types.create_manager_dto import Create_manager_dto
 from src.auth.application.commands.create_manager.types.create_manager_response import Create_manager_response
 from src.common.application.ports.hash_helper import Hash_helper
@@ -30,9 +30,21 @@ class Create_manager_service(ApplicationService):
                              c_i=dto.c_i, username= dto.username,email=dto.email,password=dto.password,
                              role=dto.role.value, created_at= current_time, updated_at= current_time
                                  )
+        
         if (await self.user_repository.user_exists(dto.email)):
             return Result.failure(Error('ExistingEmail', 'Email already associated to a user', 409))
-           # return {'code':409,'msg':'Email already associated to a user'}
-        response =  await self.user_repository.create_manager(user)
-        return response   
+        
+        new_user =  await self.user_repository.create_manager(user)
+
+        if new_user.is_error():
+            return new_user
+        
+        new_user = new_user.result()
+        response = User_in_response(id= new_user.id, 
+                            name= f'{new_user.first_name} {new_user.last_name}',
+                            username= new_user.username,
+                            c_i= new_user.c_i, email= new_user.email
+                            )
+
+        return Result.success(response)   
        

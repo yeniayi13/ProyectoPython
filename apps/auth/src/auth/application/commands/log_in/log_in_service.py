@@ -25,7 +25,9 @@ class Log_in_service[log_in_dto,log_in_response](ApplicationService):
            return {'code':409,'msg':'This user does not exist'}
         
         
-        user = await self.user_repository.find_user(dto.user)
+        response = await self.user_repository.find_user(dto.user)
+       
+        user =  response
 
         if(self.hash_helper.verify_password(dto.password, user.password)):
             token = self.auth_handler.sign(user.id, user.role)

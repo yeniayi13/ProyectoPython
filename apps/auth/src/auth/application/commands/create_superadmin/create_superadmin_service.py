@@ -1,12 +1,13 @@
 from datetime import datetime
 from uuid import uuid4
-from src.user.application.schemas.user_schermas import User_in_create
+from src.common.utils.result import Result
+from src.user.application.schemas.user_schermas import User_in_create, User_in_response
 from src.auth.application.commands.create_superadmin.types.create_superadmin_dto import Create_superadmin_dto
 from src.auth.application.commands.create_superadmin.types.create_superadmin_response import Create_superadmin_response
 from src.common.application.ports.hash_helper import Hash_helper
 from src.common.application.application_services import ApplicationService
 from src.user.application.repositories.user_repository import User_repository
-
+from src.common.utils.errors import Error
 
 
 class Create_superadmin_service(ApplicationService):
@@ -30,11 +31,20 @@ class Create_superadmin_service(ApplicationService):
                              c_i=dto.c_i, username= dto.username,email=dto.email,password=dto.password,
                              role=dto.role.value, created_at= current_time, updated_at= current_time
                                 )
+        
         if (await self.user_repository.user_exists(dto.email)):
-            return {'code':409,'msg':'Email already associated to a SUPERADMIN'}
-        response =  await self.user_repository.create_superadmin(user)
-        #result = {
-        #        'id' : response,
-        #        'code': 201
-        #        }
-        return response   
+            return Result.failure(Error('ExistingEmail', 'Email already associated to a user', 409))
+        
+        new_user  =  await self.user_repository.create_superadmin(user)
+        
+        if new_user.is_error():
+            return new_user
+        
+        new_user = new_user.result()
+        response = User_in_response(id= new_user.id, 
+                            name= f'{new_user.first_name} {new_user.last_name}',
+                            username= new_user.username,
+                            c_i= new_user.c_i, email= new_user.email
+                            )
+
+        return Result.success(response)   

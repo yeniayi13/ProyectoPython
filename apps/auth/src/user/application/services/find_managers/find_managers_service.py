@@ -1,6 +1,8 @@
+from src.user.application.schemas.user_schermas import User_in_response
+from src.common.utils.result import Result
 from src.user.application.repositories.user_repository import User_repository
 from src.common.application.application_services import ApplicationService
-
+from src.common.utils.errors import Error
 
 class Find_managers_service(ApplicationService):
 
@@ -14,9 +16,20 @@ class Find_managers_service(ApplicationService):
     async def execute(self):
             managers = await self.user_repo.find_managers()
             if (len(managers)==0):
-                 return {'code':204,'msg':'There are no managersin the system'}
+                 return Result.failure(Error('NoManagers', 'There are no managers in the system',404))
             
-            return managers
+            managers_result=[]
+            
+            for manager in managers:
+                 user_response = User_in_response(id= manager.id, 
+                            name= f'{manager.first_name} {manager.last_name}',
+                            username= manager.username,
+                            c_i= manager.c_i, email= manager.email
+                            )
+                 managers_result.append(user_response)
+                 
+                 
+            return Result.success(managers_result)
         
        
         

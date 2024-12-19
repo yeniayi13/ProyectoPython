@@ -1,3 +1,5 @@
+from src.auth.application.commands.create_superadmin.types.create_superadmin_dto import Create_superadmin_dto
+from src.user.application.schemas.user_schermas import User_in_response
 from src.auth.application.commands.create_superadmin.create_superadmin_service import Create_superadmin_service
 from src.auth.infrastructure.routes.entries.create_superadmin_entry import Create_superadmin_entry
 from src.auth.application.commands.create_manager.types.create_manager_dto import Create_manager_dto
@@ -15,21 +17,31 @@ from src.common.application.application_services import ApplicationService
 from src.common.infrastructure.adapters.JWT_auth_handler import JWT_auth_handler
 from src.common.infrastructure.adapters.bcrypt_hash_helper import Bcrypt_hash_helper
 from src.common.infrastructure.config.database.database import get_db
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 auth_router = APIRouter(
     prefix='/auth',
     tags=["auth"])
 
-@auth_router.post('/sign_up', status_code=201)
-async def sign_up(entry:sign_up_entry, session: Session = Depends(get_db) ):
+@auth_router.post('/sign_up', status_code=201,responses={
+        409: {"description": "DB consitency error"},
+        201: {"description": "Client Created"},
+        500: {"description": "Internal Server Eror"}
+    })
+async def sign_up(entry:sign_up_entry, response:Response, session: Session = Depends(get_db) ):
     role = Roles.CLIENT
     dto = Sign_up_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
+    
     service:ApplicationService = Sign_up_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
-    response = await service.execute(dto)
-    return response
+    result = await service.execute(dto)
+
+    if result.is_error():
+        response.status_code = result.error.code
+        return {'msg': result.get_error_message() }
+        
+    return result.result()
 
 
 @auth_router.post('/log_in',status_code=200)
@@ -40,23 +52,43 @@ async def log_in(entry:log_in_entry, session: Session = Depends(get_db) ):
         hash_helper=Bcrypt_hash_helper(),
         auth_handler=JWT_auth_handler())
     result = await service.execute(dto)
+    
     return {'token':result}
 
 
-@auth_router.post('/create_manager', status_code=201)
-async def create_manager(entry:Create_manager_entry, session: Session = Depends(get_db)):
+@auth_router.post('/create_manager', status_code=201,responses={
+        409: {"description": "DB consitency error"},
+        201: {"description": "Manager Created"},
+        500: {"description": "Internal Server Eror"}
+    })
+async def create_manager(entry:Create_manager_entry, response:Response, session: Session = Depends(get_db)):
     role = Roles.MANAGER
     dto = Create_manager_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
+    
     service:ApplicationService = Create_manager_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
-    response = await service.execute(dto)
-    return response
+    result = await service.execute(dto)
+    
+    if result.is_error():
+        response.status_code = result.error.code
+        return {'msg': result.get_error_message() }
+    
+    return result.result()
 
-@auth_router.post('/create_superadmin', status_code=201)
-async def create_superadmin(entry:Create_superadmin_entry, session: Session = Depends(get_db)):
+@auth_router.post('/create_superadmin', status_code=201, responses={
+        409: {"description": "DB consitency error"},
+        201: {"description": "SuperAdmin Created"},
+        500: {"description": "Internal Server Eror"}
+    })
+async def create_superadmin(entry:Create_superadmin_entry, response:Response, session: Session = Depends(get_db)):
     role = Roles.SUPERADMIN
-    dto = Create_manager_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
+    dto = Create_superadmin_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
+    
     service:ApplicationService = Create_superadmin_service( user_repository = User_postgres_repository(session),hash_helper=Bcrypt_hash_helper())
-    response = await service.execute(dto)
-    return response
+    result = await service.execute(dto)
+    
+    if result.is_error():
+        response.status_code = result.error.code
+        return {'msg': result.get_error_message() }    
+    return result.result()
