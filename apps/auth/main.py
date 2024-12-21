@@ -1,8 +1,9 @@
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
 from src.common.infrastructure.config.database.init_db import create_tables
 from src.auth.infrastructure.routes.auth_routes import auth_router
 from src.user.infrastructure.routes.user_routes import user_routes
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
 
 async def lifespan(app:FastAPI):
     print('initializing DB at start')
@@ -22,6 +23,12 @@ app = FastAPI(
     #middleware='',
     lifespan= lifespan,
 )
+
+
+
+
+
+
 
 app.include_router(auth_router)
 app.include_router(user_routes)
