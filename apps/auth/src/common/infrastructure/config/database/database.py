@@ -3,16 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from src.common.infrastructure.config.config import get_settings
 
-settings = get_settings()
+stgs = get_settings()
 
-USER = settings.POSTGRES_USER
-PASSWORD = settings.PASSWORD
-HOST = settings.HOST
-PORT = settings.PORT
-DATABASE = settings.DATABASE
-
-
-DATABASE_URL = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
+DATABASE_URL = f'postgresql://{stgs.POSTGRES_USER}:{stgs.PASSWORD}@{stgs.HOST}:{stgs.PORT}/{stgs.DATABASE}'
 engine = create_engine(DATABASE_URL,
                        echo=False,
                        pool_size=5,     
