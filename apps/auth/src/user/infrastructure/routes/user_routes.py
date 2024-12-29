@@ -14,7 +14,7 @@ from src.common.utils.verify_role import verify_roles
 from src.common.infrastructure.adapters.JWT_auth_handler import JWT_auth_handler
 from src.common.infrastructure.config.database.database import get_db
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, HTTPException, Header, Response
 from fastapi.security import OAuth2PasswordBearer
 from pika.adapters.blocking_connection import BlockingChannel
 
