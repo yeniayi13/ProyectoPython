@@ -119,11 +119,11 @@ class User_postgres_repository(Base_repository,User_repository):
             
             self.session.commit()
             
+            
             return Result.success(user)
             #return attributes
         
         except IntegrityError as e:
-           # if 'duplicate key value violates unique constraint' in str(e):
             if 'duplicate key value violates unique constraint "users_c_i_key"' in str(e):
                 return Result.failure(Error('CI_AlreadyInSystem','C.I already associated to a User',409))
             if 'duplicate key value violates unique constraint "users_username_key"' in str(e):

@@ -1,13 +1,11 @@
-import time
-from typing import Annotated
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-import jwt
-from src.user.application.models.user import Roles
 from src.common.application.ports.auth_handler import Auth_handler
 from src.common.infrastructure.config.config import get_settings
 from src.common.utils.errors import Error
 from src.common.utils.result import Result
+import time
+import jwt
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 
 
 settings = get_settings()
@@ -15,7 +13,6 @@ settings = get_settings()
 JWT_ALGORITHM = settings.JWT_ALGORITHM
 JWT_SECRET = settings.JWT_SECRET
 
-#oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 oauth2_scheme = OAuth2PasswordBearer("/auth/log_in")
 
 class JWT_auth_handler(Auth_handler):

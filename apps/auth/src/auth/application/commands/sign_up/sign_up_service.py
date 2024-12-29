@@ -1,10 +1,10 @@
-from src.common.utils.result import Result
+from src.auth.application.commands.sign_up.types.sign_up_dto import Sign_up_dto 
+from src.user.application.repositories.user_repository import User_repository
 from src.user.application.schemas.user_schermas import User_in_create, User_in_response
+from src.common.application.ports.event_handler import Event_handler
 from src.common.application.ports.hash_helper import Hash_helper
 from src.common.application.application_services import ApplicationService
-from src.auth.application.commands.sign_up.types.sign_up_dto import Sign_up_dto 
-from src.auth.application.commands.sign_up.types.sign_up_response import Sign_up_response
-from src.user.application.repositories.user_repository import User_repository
+from src.common.utils.result import Result
 from src.common.utils.errors import Error
 from uuid import uuid4
 from datetime import datetime
@@ -17,10 +17,12 @@ class Sign_up_service(ApplicationService):
             self, 
             user_repository:User_repository, 
             hash_helper: Hash_helper,
+            event_handler: Event_handler
     ):
         super().__init__()
         self.user_repository = user_repository
         self.hash_helper = hash_helper
+        self.event_handler = event_handler
 
 
     
@@ -28,7 +30,6 @@ class Sign_up_service(ApplicationService):
         
         if (await self.user_repository.user_exists(dto.email)):
             return Result.failure(Error(name='EmailAlreadyInUse', msg='This email is already taken by a user', code=409)) 
-        #{'code':409,'msg':'Email already associated with a user'}
         
         dto.password = self.hash_helper.get_password_hashed(dto.password)
         current_time = datetime.now() 
@@ -50,5 +51,12 @@ class Sign_up_service(ApplicationService):
                             c_i= new_user.c_i, email= new_user.email
                             )
         
+        event = {
+            'id':new_user.id,
+            'name':f'{new_user.first_name} {new_user.last_name}' ,
+            'C.I':new_user.c_i,
+            'username':new_user.username
+        }
+        self.event_handler.publish(event,'users.client_created','users')
         
         return Result.success(response)   
