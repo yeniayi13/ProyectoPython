@@ -23,9 +23,9 @@ try:
 
     channel.queue_bind(exchange='users', queue=client_created_queue.method.queue,routing_key='users.client_created')
     channel.queue_bind(exchange='users', queue=manager_created_queue.method.queue, routing_key='users.manager_created')
-    channel.queue_bind(exchange='users', queue=superadmin_created_queue.method.queue, routing_key='users.manager_created')
-    channel.queue_bind(exchange='users', queue=client_modified_queue.method.queue, routing_key='users.manager_created')
-    channel.queue_bind(exchange='users', queue=manager_modified_queue.method.queue, routing_key='users.manager_created')
+    channel.queue_bind(exchange='users', queue=superadmin_created_queue.method.queue, routing_key='users.superadmin_created')
+    channel.queue_bind(exchange='users', queue=client_modified_queue.method.queue, routing_key='users.client_modified')
+    channel.queue_bind(exchange='users', queue=manager_modified_queue.method.queue, routing_key='users.manager_modified')
 except pika.exceptions.AMQPConnectionError as e:
     logging.error(f"Connection error: {e}")
     raise e
