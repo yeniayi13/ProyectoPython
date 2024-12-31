@@ -4,10 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from src.common.infrastructure.config.database.database import Base
 import uuid
 
-class OrderItem(Base):
-    __tablename__ = 'order_items'
+class Cart(Base):
+    __tablename__ = 'carts'
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    order_id = Column(String(250), ForeignKey('orders.id'), nullable=False)  
+    client_id = Column(String(250), ForeignKey('clients.id'), nullable=False)  
     product_id = Column(String(250), ForeignKey('products.id'), nullable=False)
     quantity = Column(Integer, nullable=False)

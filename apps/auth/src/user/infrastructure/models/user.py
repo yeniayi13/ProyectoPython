@@ -19,5 +19,6 @@ class User(Base):
     )
     created_at = Column(Date, nullable=False)
     updated_at = Column(Date)
-
+    #created_at = Column(DateTime, default=datetime, nullable=False)
+    #updated_at = Column(DateTime, default=datetime, onupdate=datetime, nullable=False)
 
