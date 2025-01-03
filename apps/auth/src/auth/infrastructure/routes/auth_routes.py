@@ -94,7 +94,7 @@ async def create_manager(entry:Create_manager_entry, response:Response, info = D
     if info.is_error():
         response.status_code = info.error.code
         return {'msg': info.get_error_message()}
-    
+    print(info.result)
     role = info.result()
     print(role)
 

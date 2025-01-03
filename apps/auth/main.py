@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 
 
 async def lifespan(app:FastAPI):
-    print('initializing DB at start')
+    print('initializing Auht DB at start')
     try:
         create_tables()
         yield

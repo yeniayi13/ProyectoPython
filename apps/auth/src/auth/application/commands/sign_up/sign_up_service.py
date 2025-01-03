@@ -53,9 +53,10 @@ class Sign_up_service(ApplicationService):
         
         event = {
             'id':new_user.id,
-            'name':f'{new_user.first_name} {new_user.last_name}' ,
+            'first_name':new_user.first_name ,
+            'last_name': new_user.last_name ,
             'C.I':new_user.c_i,
-            'username':new_user.username
+            'email':new_user.email
         }
         self.event_handler.publish(event,'users.client_created','users')
         

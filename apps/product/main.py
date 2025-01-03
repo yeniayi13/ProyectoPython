@@ -17,9 +17,9 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="Mi API",
+        title="Product Service",
         version="1.0.0",
-        description="API con autenticación Bearer Token",
+        description="This service is on charge of maanging products, and its inventory ",
         routes=app.routes,
     )
     openapi_schema["components"]["securitySchemes"] = {

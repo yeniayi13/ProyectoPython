@@ -3,31 +3,30 @@ import pika.exceptions
 import logging
 
 
+
 try:
-    print('Initializing connection with Message Queues in Auth')
+    print('Initializing connection with Message Queues in Product Service')
     connection_parameters = pika.ConnectionParameters('localhost')
     connection = pika.BlockingConnection(connection_parameters)
     channel = connection.channel()
 
     exchange = channel.exchange_declare(
-                exchange='users',
+                exchange='products',
                 exchange_type='direct'
                 )
 
 
-    client_created_queue = channel.queue_declare('client_created')
-    manager_created_queue = channel.queue_declare('manager_created')
-    superadmin_created_queue = channel.queue_declare('superadmin_created')
-    client_modified_queue = channel.queue_declare('client_modified')
-    manager_modified_queue = channel.queue_declare('manager_modified')
+    product_created_queue = channel.queue_declare('product_created')
+    product_updated_queue = channel.queue_declare('product_updated')
+    product_delated_queue = channel.queue_declare('product_delated')
 
-    channel.queue_bind(exchange='users', queue=client_created_queue.method.queue,routing_key='users.client_created')
-    channel.queue_bind(exchange='users', queue=manager_created_queue.method.queue, routing_key='users.manager_created')
-    channel.queue_bind(exchange='users', queue=superadmin_created_queue.method.queue, routing_key='users.superadmin_created')
-    channel.queue_bind(exchange='users', queue=client_modified_queue.method.queue, routing_key='users.client_modified')
-    channel.queue_bind(exchange='users', queue=manager_modified_queue.method.queue, routing_key='users.manager_modified')
+    channel.queue_bind(exchange='products', queue=product_created_queue.method.queue,routing_key='products.product_created')
+    channel.queue_bind(exchange='products', queue=product_updated_queue.method.queue, routing_key='products.product_updated')
+    channel.queue_bind(exchange='products', queue=product_delated_queue.method.queue, routing_key='products.product_deleted')
     
-    print('Auth Queues Ready')
+    
+    
+    print('Product Queues Ready')
 except pika.exceptions.AMQPConnectionError as e:
     logging.error(f"Connection error: {e}")
     raise e

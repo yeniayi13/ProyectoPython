@@ -39,6 +39,17 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=order
 
+  product_DB:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=product
+
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:
