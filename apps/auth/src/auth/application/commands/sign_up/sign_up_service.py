@@ -59,5 +59,6 @@ class Sign_up_service(ApplicationService):
             'email':new_user.email
         }
         self.event_handler.publish(event,'users.client_created','users')
+        print('Client created event published succesfully')
         
         return Result.success(response)   

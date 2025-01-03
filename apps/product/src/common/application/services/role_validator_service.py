@@ -8,10 +8,7 @@ class RoleValidatorService:
         self.token_validator = token_validator
 
     def validate_role(self, token: str, allowed_roles: List[str]) -> JWTPayload:
-        print('allowed_roles:',allowed_roles)
         jwt_payload: JWTPayload = self.token_validator.validate_token(token)
-        print('dentro de validate roles despues de jwtpay')
-        print('jwt_payload:', jwt_payload)
 
         
         # Convertir allowed_roles a instancias de Roles

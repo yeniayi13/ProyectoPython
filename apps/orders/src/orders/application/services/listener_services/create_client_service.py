@@ -14,9 +14,7 @@ class Create_client_service(ApplicationService):
         self.client_repository = client_repository
 
     async def execute(self,dto:Create_client_dto) -> Result[bool]:
-        print('dentro de create client service')
         if (await self.client_repository.client_exists(dto.id)):
-            print('exist')
             return Result.failure(Error(name='UserAlreadyExists', msg='This user is already in the system', code=409)) 
         
         

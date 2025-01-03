@@ -42,7 +42,7 @@ async def sign_up(entry:sign_up_entry, response:Response, session: Session = Dep
     dto = Sign_up_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
     
-    service:ApplicationService = Sign_up_service( 
+    service = Sign_up_service( 
         user_repository = User_postgres_repository(session),
         hash_helper=Bcrypt_hash_helper(),
         event_handler=Pika_event_handler(channel=channel)
