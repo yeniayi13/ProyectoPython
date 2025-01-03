@@ -26,7 +26,6 @@ class RabbitMQClient:
         print('Connection stablished with RabbitMQ')
 
     async def on_message(self, message: IncomingMessage) -> None:
-        print(message.body)
         session = next(get_db())
         async with message.process():
             body = json.loads(message.body)
@@ -40,6 +39,7 @@ class RabbitMQClient:
                 )
                 service = Create_client_service(Client_postgres_repository(session))
                 response = await service.execute(dto)
+                print('Client created Event processed succesfully')
                 
             if(message.routing_key == 'users.client_updated'):
                 pass
@@ -52,6 +52,7 @@ class RabbitMQClient:
                 )
                 service = Create_product_service(Product_postgres_repository(session))
                 response = await service.execute(dto)
+                print('Product created event processed succesfully')
             if(message.routing_key == 'products.product_updated'):
                 pass        
             if(message.routing_key == 'products.product_deleted'):

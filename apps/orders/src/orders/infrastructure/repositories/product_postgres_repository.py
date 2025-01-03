@@ -29,8 +29,6 @@ class Product_postgres_repository(Base_repository,Product_repository):
     async def find_product(self, identification:str):
         try:
             product =  self.session.query(Product).filter(Product.id == identification ).first()
-            
-            print('product',product)
 
             return product
         except Exception as e:

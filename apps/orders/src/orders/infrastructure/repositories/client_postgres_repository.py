@@ -40,7 +40,6 @@ class Client_postgres_repository(Base_repository,Client_repository):
                     Client.id == identification 
                 )).first()
             
-            print('client',client)
 
             return client
         except Exception as e:
