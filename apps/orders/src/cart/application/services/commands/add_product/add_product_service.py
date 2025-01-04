@@ -6,6 +6,7 @@ from src.common.utils.errors import Error
 from uuid import uuid4
 from datetime import datetime
 
+
 from src.orders.application.repositories.client_repository import Client_repository
 from src.orders.application.repositories.product_repository import Product_repository
 
@@ -30,7 +31,7 @@ class Add_product_service(ApplicationService):
         if  not ( await self.product_repo.product_exists(dto.product_id)):
             return Result.failure(Error('ProductNotExists','The product which is being tried to add to the cart does not exist in the system',404))
         
-        if (await self.cart_repository.product_already_in_cart(dto.product_id)):
+        if (await self.cart_repository.product_already_in_cart(dto.product_id, dto.client_id)):
             return Result.failure(Error('ProductAlreadyInTheCart','The product already exists in the cart',409))
 
         result:Result = await self.cart_repository.add_product_to_cart(dto)
@@ -38,4 +39,4 @@ class Add_product_service(ApplicationService):
         if (result.is_error()):
             return result
         
-        return Result.success('Product Added succesfully to your cart')   
+        return Result.success(f'Product {dto.product_id} Added succesfully to your cart')   
