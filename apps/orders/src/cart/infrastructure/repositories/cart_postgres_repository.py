@@ -4,8 +4,8 @@ from src.cart.application.services.commands.add_product.types.app_product_dto im
 from src.common.infrastructure.config.database.postgres_base_repository import Base_repository
 from src.common.utils.errors import Error
 from src.common.utils.result import Result
-from src.orders.infrastructure.models.cart import Cart
-from sqlalchemy import or_, and_
+from src.cart.infrastructure.models.cart import Cart
+from sqlalchemy import and_
 
 from src.orders.infrastructure.models.product import Product
 
