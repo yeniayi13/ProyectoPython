@@ -19,6 +19,9 @@ class Cart_repository(ABC):
         pass
     
     @abstractmethod
-    async def remove_product_from_cart(product:Cart_in_delete)->Result:
-            pass
+    def remove_product_from_cart(product:Cart_in_delete)->Result:
+        pass
         
+    @abstractmethod 
+    def get_cart(client_id):
+        pass
