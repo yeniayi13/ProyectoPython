@@ -19,6 +19,13 @@ class Order_repository(ABC):
 
     
     @abstractmethod
-    def modify_order(id:str,user):
+    def cancel_order(order_id:str,user):
         pass
-    
+
+    @abstractmethod
+    def get_order(order_id:str):
+        pass
+
+    @abstractmethod
+    def find_orders(client_id:str):
+        pass

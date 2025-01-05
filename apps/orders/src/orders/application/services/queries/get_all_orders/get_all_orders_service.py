@@ -5,7 +5,7 @@ from src.orders.application.repositories.orders_repository import Order_reposito
 
 
 
-class Cancel_order_service(ApplicationService):
+class Get_all_orders_service(ApplicationService):
 
 
     def __init__(
@@ -17,12 +17,11 @@ class Cancel_order_service(ApplicationService):
         
 
     
-    async def execute(self,order_id:str)-> Result :
-        if not (await self.order_repository.order_exists(order_id)):
-            return Result.failure(Error('OrderNotExist','The order you are trying to cancel does not exist in the system',409))
-        result = await self.order_repository.cancel_order(order_id)
-
+    async def execute(self,client_id:str)-> Result :
+        #if not (await self.order_repository.order_exists(order_id)):
+        #    return Result.failure(Error('OrderNotExist','The order you are trying to cancel does not exist in the system',409))
+        
+        result = await self.order_repository.find_orders(client_id)
         if result.is_error():
             return result
-
-        return Result.success(f'The order {result.result()} has been cancelled')
+        return result
