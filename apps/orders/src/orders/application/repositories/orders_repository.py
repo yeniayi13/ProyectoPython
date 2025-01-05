@@ -1,10 +1,12 @@
 
 from abc import ABC, abstractmethod
 
+from src.orders.application.schemas.order_schemas import Product_in_order
+
 
 class Order_repository(ABC):
     @abstractmethod
-    def create_order():
+    def create_order(client_id:str, products: list[Product_in_order]):
         pass
 
     @abstractmethod

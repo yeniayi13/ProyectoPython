@@ -14,9 +14,6 @@ class Cart_postgres_repository(Base_repository,Cart_repository):
     async def add_product_to_cart(self, product:Add_product_dto):
         try:
             cart=Cart(**product.model_dump(exclude_none=True))
-            if not cart:
-                return Result.failure(Error('ProductNotAddedToCart','A problem was found while adding the product to the cart',500))
-            
             
             self.session.add(instance=cart)
             self.session.commit()
@@ -88,7 +85,7 @@ class Cart_postgres_repository(Base_repository,Cart_repository):
         
     async def get_cart(self,client_id:str):
         try:
-            carts = self.session.query(Product.name, Cart.quantity).\
+            carts = self.session.query(Product.name, Cart.quantity, Product.id, Product.price).\
                 join(Cart, Product.id == Cart.product_id).\
                 filter(Cart.client_id ==client_id ).\
                 all()

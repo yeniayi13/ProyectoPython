@@ -12,6 +12,7 @@ class User_postgres_repository(Base_repository,User_repository):
 
     async  def create_user(self, user:User_in_create) -> User_in_response:
         try:
+            print(user.model_dump( exclude_none=True ))
             new_user = User(**user.model_dump( exclude_none=True ) )
             
             if not new_user:
