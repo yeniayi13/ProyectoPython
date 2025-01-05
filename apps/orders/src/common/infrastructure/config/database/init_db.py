@@ -3,7 +3,8 @@ from src.orders.infrastructure.models.client import Client
 from src.orders.infrastructure.models.order import Order
 from src.orders.infrastructure.models.product import Product
 from src.orders.infrastructure.models.order_items import OrderItem
-from src.orders.infrastructure.models.cart import Cart
+from src.cart.infrastructure.models.cart import Cart
+
 
 def create_tables():
     Base.metadata.create_all(bind=engine)#

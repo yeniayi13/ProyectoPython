@@ -16,8 +16,8 @@ class Order(Base):
     status = Column(
         String(10),
         CheckConstraint(
-            "status IN ('pending', 'completed', 'cancelled')",
-            name='status_check'
+            "status IN ('PENDING', 'COMPLETED', 'CANCELLED')",
+            name='order_status_check'
         ),
         nullable=False
     )
