@@ -20,7 +20,7 @@ class JWT_auth_handler(Auth_handler):
     def sign(self, id:str, role:str)->str:
         payload = {
             'user_id' : id,
-            'expires' : time.time() + 900,
+            'expires' : time.time() + 5000,
             'role': role
             }
         
@@ -38,4 +38,7 @@ class JWT_auth_handler(Auth_handler):
         except Exception as e:
             if 'Signature verification failed' in str(e):
                 return Result.failure(Error('JWTVerificationFailed','Signature verification failed because of an invalid token',401)) 
-            raise e
+            if 'Invalid crypto padding' in str(e):
+                return Result.failure(Error('InvalidCryptoPadding','Your JWT token is not complete, check it please',401))  
+            print('decodeJWT e: ',e)
+            return Result.failure(Error('UnknownError','There is no clue about this error',500))

@@ -1,4 +1,6 @@
 import asyncio
+
+from fastapi.security import OAuth2PasswordBearer
 #from src.common.infrastructure.config.event_handler.event_handler_connection import get_channel, rabbitmq_connection
 from src.common.infrastructure.config.database.init_db import create_tables
 from fastapi import FastAPI, logger
@@ -10,6 +12,7 @@ from contextlib import asynccontextmanager
 
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 client_created_client = RabbitMQClient("amqp://guest:guest@localhost/")
 client_updated_client = RabbitMQClient("amqp://guest:guest@localhost/")

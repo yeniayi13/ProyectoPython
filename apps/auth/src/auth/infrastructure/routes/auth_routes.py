@@ -74,7 +74,7 @@ async def log_in(response:Response, session: Session = Depends(get_db), form_dat
         response.status_code = result.error.code
         return {'msg': result.get_error_message() }
     
-    
+    print(result.result())
     return {
         "access_token": result.result(),
         "token_type": "bearer"

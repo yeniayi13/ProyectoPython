@@ -23,9 +23,17 @@ class Order_repository(ABC):
         pass
 
     @abstractmethod
+    def complete_order(order_id:str,user):
+        pass
+
+    @abstractmethod
     def get_order(order_id:str):
         pass
 
     @abstractmethod
     def find_orders(client_id:str):
+        pass
+
+    @abstractmethod
+    def verify_order_belongs_to_user(order_id, client_id):
         pass
