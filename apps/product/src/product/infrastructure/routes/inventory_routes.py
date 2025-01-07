@@ -12,13 +12,13 @@ from src.common.infrastructure.config.database.database import get_db
 
 router = APIRouter(prefix="/inventories", tags=["Inventories"])
 
-def get_product_repository(db: AsyncSession = Depends(get_db)) -> ProductRepository:
+def get_inventory_repository(db: AsyncSession = Depends(get_db)) -> ProductRepository:
     return ProductAlchemyRepository(db)
 
 @router.get("/{product_id}")
 async def list_quantity_of_product_inventory(
     product_id: str, 
-    product_repository: ProductRepository = Depends(get_product_repository),
+    product_repository: ProductRepository = Depends(get_inventory_repository),
     _ = Depends(require_roles([Roles.MANAGER]))
 ):
     service = GetProductByIdService(product_repository)
@@ -41,6 +41,14 @@ async def list_quantity_of_product_inventory(
             detail="Producto no encontrado"
         )
     else:
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print(result.get_data())
+        print(result.get_data().id)
+        print(result.get_data().quantity)
+        print(result.get_data().name)
         return {
             "product_id": result.get_data().id,
             "quantity": result.get_data().quantity,
@@ -52,7 +60,7 @@ async def list_quantity_of_product_inventory(
 async def update_quantity_of_product(
     product_id: str, 
     data: ProductQuantityUpdate,
-    product_repository: ProductRepository = Depends(get_product_repository),
+    product_repository: ProductRepository = Depends(get_inventory_repository),
     _ = Depends(require_roles([Roles.MANAGER]))
 ):
     try:
