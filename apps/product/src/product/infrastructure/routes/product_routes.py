@@ -2,6 +2,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.common.domain.roles import Roles
+from src.common.infrastructure.adapters.pika_event_handler import Pika_event_handler
+from src.common.infrastructure.config.event_handler.event_handler_connection import get_channel
 from src.common.infrastructure.dependencies.token_role_validator import require_roles
 from src.common.infrastructure.config.database.database import get_db
 from src.product.application.repositories.product_repository import ProductRepository
@@ -63,9 +65,11 @@ async def get_product(
 async def create_product(
     product: ProductCreate, 
     product_repository: ProductRepository = Depends(get_product_repository),
-    _ = Depends(require_roles([Roles.MANAGER]))
+    _ = Depends(require_roles([Roles.MANAGER])),
+    channel = Depends(get_channel)
 ):
-    service = CreateProductService(product_repository)
+    event_handler =Pika_event_handler(channel)
+    service = CreateProductService(product_repository,event_handler)
     serviceResponse = await service.execute(data=product)
     if serviceResponse.is_success(): return serviceResponse.get_data()
     else:
@@ -78,9 +82,11 @@ async def create_product(
 async def update_product(
     product: ProductUpdate,
     product_repository: ProductRepository = Depends(get_product_repository),
-    _ = Depends(require_roles([Roles.MANAGER]))
+    _ = Depends(require_roles([Roles.MANAGER])),
+    channel = Depends(get_channel)
 ):
-    service = UpdateProductService(product_repository)
+    event_handler =Pika_event_handler(channel)
+    service = UpdateProductService(product_repository,event_handler)
     print(f'El producto a editar es: {product}')
     result = await service.execute(data=product)
     if result.is_error():

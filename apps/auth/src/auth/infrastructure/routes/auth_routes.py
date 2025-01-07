@@ -42,7 +42,7 @@ async def sign_up(entry:sign_up_entry, response:Response, session: Session = Dep
     dto = Sign_up_dto(first_name=entry.first_name, last_name=entry.last_name, c_i=entry.c_i, 
                 username=entry.username,email=entry.email, password=entry.password, role=role)
     
-    service:ApplicationService = Sign_up_service( 
+    service = Sign_up_service( 
         user_repository = User_postgres_repository(session),
         hash_helper=Bcrypt_hash_helper(),
         event_handler=Pika_event_handler(channel=channel)
@@ -74,7 +74,7 @@ async def log_in(response:Response, session: Session = Depends(get_db), form_dat
         response.status_code = result.error.code
         return {'msg': result.get_error_message() }
     
-    
+    print(result.result())
     return {
         "access_token": result.result(),
         "token_type": "bearer"
@@ -94,7 +94,7 @@ async def create_manager(entry:Create_manager_entry, response:Response, info = D
     if info.is_error():
         response.status_code = info.error.code
         return {'msg': info.get_error_message()}
-    
+    print(info.result)
     role = info.result()
     print(role)
 

@@ -69,10 +69,11 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
             product_model.updated_at = datetime.now(timezone.utc)
             await self.db.commit()
             await self.db.refresh(product_model)
-            print(f"Producto actualizado en la base de datos: {product_model}")
-            print(f"Valores del esquema ProductResponse: {model_to_product(product_model).model_dump()}")
+            #print(f"Producto actualizado en la base de datos: {product_model.__dict__}")
+            #print(f"Valores del esquema ProductResponse: {model_to_product(product_model).dict()}")
             return model_to_product(product_model)
         except Exception as e:
+            print('rolling back')
             await self.db.rollback()
             raise
 

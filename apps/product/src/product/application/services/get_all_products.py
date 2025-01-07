@@ -9,6 +9,7 @@ class GetAllProductsService(ApplicationService[None, Result[Product]]):
     def __init__(
         self,
         product_repository: ProductRepository
+
     ):
         super().__init__()
         self.product_repository = product_repository

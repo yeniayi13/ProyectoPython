@@ -26,6 +26,7 @@ def require_roles(allowed_roles: List[Roles]):
     ):
         try:
             role_validator.validate_role(token, [role.value for role in allowed_roles])
+
         except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

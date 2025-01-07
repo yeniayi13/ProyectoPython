@@ -6,10 +6,10 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DATABASE: str
     POSTGRES_HOST: str
-    POSTGRES_PORT: int = 5432
+    POSTGRES_PORT: int = 5434
     PGADMIN_DEFAULT_EMAIL: str
     PGADMIN_DEFAULT_PASSWORD: str
-    JWT_SECRET: str
+    JWT_SECRET: str = 'mysecret'
     JWT_ALGORITHM: str = "HS256"
     JWT_TEST: str
     PORT: int = 8000

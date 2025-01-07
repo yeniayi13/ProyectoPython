@@ -2,10 +2,9 @@ import pika
 import pika.exceptions
 import logging
 
-#logging.basicConfig(level=logging.INFO)
 
 try:
-    print('Initializing connection with Message Queues')
+    print('Initializing connection with Message Queues in Auth')
     connection_parameters = pika.ConnectionParameters('localhost')
     connection = pika.BlockingConnection(connection_parameters)
     channel = connection.channel()
@@ -14,6 +13,7 @@ try:
                 exchange='users',
                 exchange_type='direct'
                 )
+
 
     client_created_queue = channel.queue_declare('client_created')
     manager_created_queue = channel.queue_declare('manager_created')
@@ -26,6 +26,8 @@ try:
     channel.queue_bind(exchange='users', queue=superadmin_created_queue.method.queue, routing_key='users.superadmin_created')
     channel.queue_bind(exchange='users', queue=client_modified_queue.method.queue, routing_key='users.client_modified')
     channel.queue_bind(exchange='users', queue=manager_modified_queue.method.queue, routing_key='users.manager_modified')
+    
+    print('Auth Queues Ready')
 except pika.exceptions.AMQPConnectionError as e:
     logging.error(f"Connection error: {e}")
     raise e
@@ -33,7 +35,7 @@ except Exception as e:
     logging.error(f"Unkwon error: {e}")
     raise e
 
-print('Queues Ready')
+
 
 
 
