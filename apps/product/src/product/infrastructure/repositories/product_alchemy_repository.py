@@ -28,8 +28,8 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
 
     async def create(self, product_data: ProductCreate) -> Product:
         try:
-            print(f"Creando producto con los siguientes datos: {product_data.dict()}")
-            new_product = ProductModel(**product_data.dict())
+            print(f"Creando producto con los siguientes datos: {product_data.model_dump()}")
+            new_product = ProductModel(**product_data.model_dump())
             self.db.add(new_product)
             await self.db.commit()
             await self.db.refresh(new_product)
@@ -70,7 +70,7 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
             await self.db.commit()
             await self.db.refresh(product_model)
             print(f"Producto actualizado en la base de datos: {product_model}")
-            print(f"Valores del esquema ProductResponse: {model_to_product(product_model).dict()}")
+            print(f"Valores del esquema ProductResponse: {model_to_product(product_model).model_dump()}")
             return model_to_product(product_model)
         except Exception as e:
             await self.db.rollback()

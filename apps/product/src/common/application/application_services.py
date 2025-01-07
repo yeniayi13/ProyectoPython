@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 TService = TypeVar('TService')
 TRespond = TypeVar('TRespond')
 
-class ApplicationService[TService, TRespond](ABC):
+class ApplicationService(ABC, Generic[TService, TRespond]):
     @abstractmethod
     def execute(self, data: TService) -> TRespond:
         pass

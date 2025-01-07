@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 import time
 from src.common.domain.roles import Roles
 
@@ -7,13 +7,13 @@ class JWTPayload(BaseModel):
     expires: float = Field(..., description="Timestamp de expiración del token")
     role: Roles = Field(..., description="Rol del usuario asociado al token")
 
-    @validator("expires")
+    @field_validator("expires")
     def validate_expiration(cls, value):
         if value <= time.time():
             raise ValueError("El token ha expirado")
         return value
 
-    @validator("role", pre=True)
+    @field_validator("role", mode="before")
     def validate_role(cls, value):
         if isinstance(value, str):
             try:

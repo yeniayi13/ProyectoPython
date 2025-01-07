@@ -19,4 +19,4 @@ class CreateProductService(ApplicationService[ProductCreate, Result[Product]]):
             return Result.success(product)
         except Exception as e:
             print(f"Error al crear el producto: {e}")
-            return Result.failure(Error('Internal Error', f'Error getting products: {str(e)}', 500))
+            return Result.failure(Error('Internal Error', f'Error creating products: {str(e)}', 500))

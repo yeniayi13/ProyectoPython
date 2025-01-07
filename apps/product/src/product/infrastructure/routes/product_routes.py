@@ -25,6 +25,7 @@ async def list_products(
     service = GetAllProductsService(product_repository)
     result = await service.execute()
     if result.is_error():
+        print(result.get_error_message())
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail="No se pudo obtener la lista de productos"

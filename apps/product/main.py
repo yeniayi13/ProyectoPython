@@ -4,9 +4,18 @@ from fastapi.security import HTTPBearer
 from src.product.infrastructure.routes.product_routes import router as product_router
 from src.product.infrastructure.routes.inventory_routes import router as inventory_router
 from src.common.infrastructure.config.database.init_db import create_tables
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    try:
+        await create_tables()
+    except Exception as e:
+        print(f"Error al crear tablas: {e}")
+    yield
+    print("Aplicación cerrándose...")
 
+app = FastAPI(lifespan=lifespan)
 app.include_router(product_router)
 app.include_router(inventory_router)
 
@@ -35,9 +44,9 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-@app.on_event("startup")
-async def on_startup():
-    try:
-        await create_tables()
-    except Exception as e:
-        print(f"Error al crear tablas: {e}")
+# @app.on_event("startup")
+# async def on_startup():
+#     try:
+#         await create_tables()
+#     except Exception as e:
+#         print(f"Error al crear tablas: {e}")
