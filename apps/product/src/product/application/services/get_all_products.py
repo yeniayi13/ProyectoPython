@@ -19,6 +19,7 @@ class GetAllProductsService(ApplicationService[None, Result[Product]]):
             products = await self.product_repository.get_all()
             return Result.success(products)
         except Exception as e:
+            print('e:',e)
             return Result.failure(Error('Internal Error', f'Error getting products: {str(e)}', 500))
 
 

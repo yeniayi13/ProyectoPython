@@ -18,8 +18,12 @@ class UpdateProductService(ApplicationService[ProductUpdate, Result[Product]]):
 
     async def execute(self, data: ProductUpdate) -> Result[Product]:
         try:
+            _product =  await self.product_repository.get_by_id(data.id)
+            if not _product.value:
+                return Result.failure(Error('ProductNotExist', f'Product with ID {data} does not exist in the system', 409))
+            print('before update')
             product = await self.product_repository.update(data)
-
+            print('after update')
             print('1234',str(product.id))
             print('5678',product.id)
             event = {

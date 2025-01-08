@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from src.common.domain.roles import Roles
+from src.common.infrastructure.adapters.pika_event_handler import Pika_event_handler
+from src.common.infrastructure.config.event_handler.event_handler_connection import get_channel
 from src.common.infrastructure.dependencies.token_role_validator import require_roles
 from src.product.application.schemas.product_schema import ProductQuantityUpdate, ProductUpdate
 from src.product.application.repositories.product_repository import ProductRepository
@@ -53,7 +55,8 @@ async def update_quantity_of_product(
     product_id: str, 
     data: ProductQuantityUpdate,
     product_repository: ProductRepository = Depends(get_product_repository),
-    _ = Depends(require_roles([Roles.MANAGER]))
+    _ = Depends(require_roles([Roles.MANAGER])),
+    channel = Depends(get_channel)
 ):
     try:
         product_id = UUID(product_id)
@@ -62,7 +65,8 @@ async def update_quantity_of_product(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="ID de producto inválido"
         )
-    service = UpdateProductService(product_repository)
+    event_handler =Pika_event_handler(channel)
+    service = UpdateProductService(product_repository, event_handler)
     result = await service.execute(data=ProductUpdate(id=product_id, quantity=data.quantity))
     if result.is_error():
         raise HTTPException(
