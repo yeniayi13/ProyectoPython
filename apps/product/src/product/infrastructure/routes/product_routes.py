@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, Response, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.common.domain.roles import Roles
 from src.common.infrastructure.adapters.pika_event_handler import Pika_event_handler
@@ -26,6 +26,7 @@ async def list_products(
 ):
     service = GetAllProductsService(product_repository)
     result = await service.execute()
+    
     if result.is_error():
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
@@ -80,6 +81,7 @@ async def create_product(
 @router.put("", response_model=ProductResponse)
 async def update_product(
     product: ProductUpdate,
+    response:Response,
     product_repository: ProductRepository = Depends(get_product_repository),
     _ = Depends(require_roles([Roles.MANAGER])),
     channel = Depends(get_channel)
@@ -88,6 +90,12 @@ async def update_product(
     service = UpdateProductService(product_repository,event_handler)
     print(f'El producto a editar es: {product}')
     result = await service.execute(data=product)
+    if 'does not exist in the system' in result.get_error_message():
+        print('hello')
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, 
+            detail='Product does not exist in the system'
+        )
     if result.is_error():
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
@@ -99,9 +107,11 @@ async def update_product(
 async def delete_product(
     product_id: str, 
     product_repository: ProductRepository = Depends(get_product_repository),
-    _ = Depends(require_roles([Roles.MANAGER]))
+    _ = Depends(require_roles([Roles.MANAGER])),
+    channel = Depends(get_channel)
 ): 
-    service = DeleteProductService(product_repository)
+    event_handler =Pika_event_handler(channel)
+    service = DeleteProductService(product_repository, event_handler)
     try:
         product_id = UUID(product_id)
     except ValueError:

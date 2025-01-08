@@ -41,6 +41,12 @@ class ProductUpdate(BaseModel):
     margin: Optional[float] = Field(None, description="Margen de ganancia, debe ser mayor o igual que cero")
     price: Optional[float] = Field(None, description="Precio de venta, debe ser mayor que cero")
     quantity: Optional[int] = Field(None, description="Cantidad en stock, debe ser mayor o igual que cero")
+    
+    @validator('code')
+    def code_must_be_alphanumeric(cls, value):
+        if not value.isalnum():
+            raise ValueError('El código debe ser alfanumérico')
+        return value
 
 class Product(ProductBase):
     id: UUID = Field(default_factory=UUID)

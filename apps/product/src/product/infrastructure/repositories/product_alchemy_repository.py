@@ -73,6 +73,7 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
             #print(f"Valores del esquema ProductResponse: {model_to_product(product_model).dict()}")
             return model_to_product(product_model)
         except Exception as e:
+            print('update e:',e)
             print('rolling back')
             await self.db.rollback()
             raise
