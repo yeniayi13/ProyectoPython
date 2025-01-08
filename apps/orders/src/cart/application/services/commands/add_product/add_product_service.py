@@ -34,6 +34,7 @@ class Add_product_service(ApplicationService):
         if (await self.cart_repository.product_already_in_cart(dto.product_id, dto.client_id)):
             return Result.failure(Error('ProductAlreadyInTheCart','The product already exists in the cart',409))
 
+        
         result:Result = await self.cart_repository.add_product_to_cart(dto)
 
         if (result.is_error()):

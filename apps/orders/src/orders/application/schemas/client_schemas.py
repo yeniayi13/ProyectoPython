@@ -7,3 +7,9 @@ class Client_in_create(BaseModel):
     last_name:str
     c_i:str
     email:EmailStr
+
+class Client_in_update(BaseModel):
+    first_name:str
+    last_name:str
+    c_i:str
+    email:EmailStr

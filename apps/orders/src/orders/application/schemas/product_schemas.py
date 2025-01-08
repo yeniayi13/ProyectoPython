@@ -7,3 +7,9 @@ class Product_in_create(BaseModel):
     price:float
     quantity:int
     
+
+class Product_in_update(BaseModel):
+    name:str
+    price:float
+    quantity:int
+    

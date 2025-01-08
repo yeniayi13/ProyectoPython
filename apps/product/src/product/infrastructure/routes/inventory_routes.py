@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
-from apps.product.src.product.infrastructure.routes.product_routes import get_product_repository
+from src.product.infrastructure.routes.product_routes import get_product_repository
 from src.common.domain.roles import Roles
 from src.common.infrastructure.adapters.pika_event_handler import Pika_event_handler
 from src.common.infrastructure.config.event_handler.event_handler_connection import get_channel

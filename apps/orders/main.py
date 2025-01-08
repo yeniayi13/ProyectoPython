@@ -26,6 +26,8 @@ async def lifespan(app:FastAPI):
         print("Database initialized and tables created.")
         await client_created_client.start_consume("client_created")
         await product_created_client.start_consume("product_created")
+        await client_updated_client.start_consume('client_modified')
+        await product_updated_client.start_consume('product_updated')
         yield
         await client_created_client.close()
     except Exception as e:

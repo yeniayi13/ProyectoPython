@@ -37,9 +37,10 @@ class Modify_client_service(ApplicationService):
             
             event = {
             'id':modified_user.id,
-            'name':f'{modified_user.first_name} {modified_user.last_name}' ,
+            'first_name':modified_user.first_name,
+            'last_name':modified_user.last_name ,
             'C.I':modified_user.c_i,
-            'username':modified_user.username
+            'email':modified_user.email
             }
 
             self.event_handler.publish(event,'users.client_modified','users')

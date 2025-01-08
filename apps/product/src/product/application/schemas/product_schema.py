@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, validator
 from pydantic.config import ConfigDict
 
 class ProductQuantityUpdate(BaseModel):

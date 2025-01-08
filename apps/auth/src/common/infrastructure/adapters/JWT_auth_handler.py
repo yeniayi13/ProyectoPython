@@ -39,6 +39,9 @@ class JWT_auth_handler(Auth_handler):
             if 'Signature verification failed' in str(e):
                 return Result.failure(Error('JWTVerificationFailed','Signature verification failed because of an invalid token',401)) 
             if 'Invalid crypto padding' in str(e):
-                return Result.failure(Error('InvalidCryptoPadding','Your JWT token is not complete, check it please',401))  
-            print('decodeJWT e: ',e)
+                return Result.failure(Error('JWTVerificationFailed','Your JWT token is not complete, check it please',401))  
+            if 'Not enough segments' in str(e):
+                return Result.failure(Error('JWTVerificationFailed','Your JWT token is not complete, check it please',401))  
+            
+            print('decodeJWT e:',e)
             return Result.failure(Error('UnknownError','There is no clue about this error',500))
