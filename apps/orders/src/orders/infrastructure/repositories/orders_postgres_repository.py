@@ -78,8 +78,11 @@ class Order_postgrs_repository (Base_repository,Order_repository):
             if (order.status == 'CANCELLED'):
                 return Result.failure(Error('OrderStatusIncorrect',f'This order is already cancelled',409))
             order.status = 'CANCELLED'
+            products = await self.get_order(order_id=order_id)
+            #print(products.result())
             self.session.commit()
-            return Result.success(order_id)
+            
+            return Result.success(products.result())
         except Exception as e:
             print(e)    
             return Result.failure(Error('UnknownError','There is no clue about this error',500))  
@@ -121,6 +124,7 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                 Order.total_amount, 
                 Order.status, 
                 Product.name, 
+                Product.id,
                 OrderItem.quantity
             ).filter(
                 Order.id == OrderItem.order_id, 
@@ -169,17 +173,20 @@ class Order_postgrs_repository (Base_repository,Order_repository):
             'status':_order[0].status,
             'items':[{
                 'name':'',
-                'quantity':0
+                'quantity':0,
+                'id':''
             }]
         }
+        print(_order)
         products = [{
             'name':res.name,
-            'quantity':res.quantity 
+            'quantity':res.quantity ,
+            'id':res.id
             } 
               for res in _order]
 
         order['items']=products
-        
+        print(products)
         return order
 
     async def find_orders(self, client_id:str):

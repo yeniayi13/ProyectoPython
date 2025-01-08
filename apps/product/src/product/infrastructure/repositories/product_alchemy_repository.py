@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import List
 from uuid import UUID
 from src.product.infrastructure.mappers.map_model_to_product import model_to_product
 from src.product.application.schemas.product_schema import Product, ProductCreate, ProductUpdate
@@ -88,5 +89,43 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
                 await self.db.commit()
             else: raise ValueError(f"Product with id {product_id} not found")
         except Exception as e:
+            await self.db.rollback()
+            raise
+
+    async def update_in_cancelled_products(self, products: list[ProductUpdate]) ->List[Product]:  
+        try:
+            
+            _products = []
+            for product in products:
+                product_model = (
+                    await self.db.execute(select(ProductModel).where(ProductModel.id == product.id))
+                ).scalar_one_or_none()
+                if product_model is None:
+                    raise ValueError(f"Product with id {product.id}")
+                
+                #product_model.quantity+=product.quantity
+                product.quantity+=product_model.quantity
+                
+                update_dict = {
+                    k: v for k, v in product.dict(exclude_unset=True).items()
+                    if v is not None and k != 'id'
+                }
+
+                for key, value in update_dict.items():
+                    setattr(product_model, key, value)
+                    product_model.updated_at = datetime.now(timezone.utc)
+                
+                _products.append(model_to_product(product_model))
+            print('products update cancel',_products)
+            await self.db.commit()
+            #for product in _products:
+            #    await self.db.refresh(product)
+            
+            
+            return _products
+
+        except Exception as e:
+            print('update e:',e)
+            print('rolling back')
             await self.db.rollback()
             raise
