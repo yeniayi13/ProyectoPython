@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
+from apps.product.src.product.infrastructure.routes.product_routes import get_product_repository
 from src.common.domain.roles import Roles
 from src.common.infrastructure.adapters.pika_event_handler import Pika_event_handler
 from src.common.infrastructure.config.event_handler.event_handler_connection import get_channel
@@ -14,13 +15,13 @@ from src.common.infrastructure.config.database.database import get_db
 
 router = APIRouter(prefix="/inventories", tags=["Inventories"])
 
-def get_product_repository(db: AsyncSession = Depends(get_db)) -> ProductRepository:
+def get_inventory_repository(db: AsyncSession = Depends(get_db)) -> ProductRepository:
     return ProductAlchemyRepository(db)
 
 @router.get("/{product_id}")
 async def list_quantity_of_product_inventory(
     product_id: str, 
-    product_repository: ProductRepository = Depends(get_product_repository),
+    product_repository: ProductRepository = Depends(get_inventory_repository),
     _ = Depends(require_roles([Roles.MANAGER]))
 ):
     service = GetProductByIdService(product_repository)
@@ -43,6 +44,14 @@ async def list_quantity_of_product_inventory(
             detail="Producto no encontrado"
         )
     else:
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print('SE ESTÁ EJECUTANDO ESTOOOOO!!!!')
+        print(result.get_data())
+        print(result.get_data().id)
+        print(result.get_data().quantity)
+        print(result.get_data().name)
         return {
             "product_id": result.get_data().id,
             "quantity": result.get_data().quantity,

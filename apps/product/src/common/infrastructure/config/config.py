@@ -11,18 +11,14 @@ class Settings(BaseSettings):
     PGADMIN_DEFAULT_PASSWORD: str
     JWT_SECRET: str = 'mysecret'
     JWT_ALGORITHM: str = "HS256"
+    JWT_TEST: str
     PORT: int = 8000
 
     model_config = SettingsConfigDict(
         env_file='.env',
         env_file_encoding='utf-8',
-        case_sensitive=True
+        case_sensitive=True,
     )
-    
-    #class Config:
-    #    env_file = '.env'
-    #    env_file_encoding = 'utf-8'
-    #    case_sensitive = True
 
 @lru_cache
 def get_settings() -> Settings:

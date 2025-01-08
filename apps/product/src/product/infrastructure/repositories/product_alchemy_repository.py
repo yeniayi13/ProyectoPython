@@ -28,8 +28,8 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
 
     async def create(self, product_data: ProductCreate) -> Product:
         try:
-            print(f"Creando producto con los siguientes datos: {product_data.dict()}")
-            new_product = ProductModel(**product_data.dict())
+            print(f"Creando producto con los siguientes datos: {product_data.model_dump()}")
+            new_product = ProductModel(**product_data.model_dump())
             self.db.add(new_product)
             await self.db.commit()
             await self.db.refresh(new_product)
