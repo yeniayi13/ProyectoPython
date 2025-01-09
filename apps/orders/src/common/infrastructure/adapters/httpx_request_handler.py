@@ -9,10 +9,10 @@ settings = get_settings()
 class Httpx_request_handler(Request_handler):
     
     
-    async def discount_product_quantity(self, route:str, product_id: str, quantity: str ) -> str:
+    async def discount_product_quantity(self, route:str, product_id: str, quantity: str, add:bool ) -> str:
         async with httpx.AsyncClient() as client:
             try:
-                response = await client.put(f"{route}/{product_id}/{quantity}")
+                response = await client.put(f"{route}/{product_id}/{quantity}/{add}")
                 print(response)
                 if response.status_code == 500:
                     response_payload ={

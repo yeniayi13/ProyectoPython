@@ -26,8 +26,10 @@ class Update_product_service(ApplicationService):
         product= Product_in_update(
             name= dto.name,
             price=dto.price,
-            quantity=dto.quantity
+            quantity=dto.quantity,
+            cost=dto.cost
         )
+        print(product)
         
         
         new_product =  await self.product_repository.modify_product(dto.id, product)

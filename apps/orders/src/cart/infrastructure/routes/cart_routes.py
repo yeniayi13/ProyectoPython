@@ -126,7 +126,8 @@ async def remove_one(
     dto= Modify_cart_quantity_dto(client_id=client_id, product_id= product_id, add=False)
     service=Modify_cart_quantity_service(
         cart_repository=Cart_postgres_repository(session),
-        product_repo= Product_postgres_repository(session)
+        product_repo= Product_postgres_repository(session),
+        request_handler= Httpx_request_handler()
     )
     result = await service.execute(dto)
     if result.is_error():

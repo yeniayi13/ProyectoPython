@@ -61,6 +61,7 @@ class RabbitMQClient:
                     name=body['name'],
                     price=body['price'],
                     quantity=body['quantity'],
+                    cost=body['cost']
                 )
                 service = Create_product_service(Product_postgres_repository(session))
                 response = await service.execute(dto)
@@ -71,6 +72,7 @@ class RabbitMQClient:
                     name=body['name'],
                     price=body['price'],
                     quantity=body['quantity'],
+                    cost=body['cost']
                 )
                 service = Update_product_service(Product_postgres_repository(session))
                 response = await service.execute(dto)

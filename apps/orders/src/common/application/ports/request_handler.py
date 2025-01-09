@@ -3,7 +3,7 @@ from abc import ABC,abstractmethod
 class Request_handler(ABC):
     
     @abstractmethod
-    def discount_product_quantity(route: str,product_id: str, quantity: int ) -> str:
+    def discount_product_quantity(route: str,product_id: str, quantity: int, add:bool ) -> str:
         pass
     
     @abstractmethod

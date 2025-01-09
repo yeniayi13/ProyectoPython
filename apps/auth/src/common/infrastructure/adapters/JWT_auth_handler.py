@@ -1,5 +1,5 @@
+from src.common.infrastructure.config.config import get_settings_auth
 from src.common.application.ports.auth_handler import Auth_handler
-from src.common.infrastructure.config.config import get_settings
 from src.common.utils.errors import Error
 from src.common.utils.result import Result
 import time
@@ -8,7 +8,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 
-settings = get_settings()
+settings = get_settings_auth()
 
 JWT_ALGORITHM = settings.JWT_ALGORITHM
 JWT_SECRET = settings.JWT_SECRET

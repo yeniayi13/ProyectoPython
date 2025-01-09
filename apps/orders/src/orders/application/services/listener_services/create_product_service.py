@@ -27,7 +27,9 @@ class Create_product_service(ApplicationService):
             id=dto.id,
             name= dto.name,
             price=dto.price,
-            quantity=dto.quantity
+            quantity=dto.quantity,
+            cost=dto.cost
+            
         )
         
         

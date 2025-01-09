@@ -38,15 +38,13 @@ class Client_postgres_repository(Base_repository,Client_repository):
                     Client.email == identification,
                     Client.id == identification 
                 )).first()
-            
-            print('client:',client.first_name )
             return client
         except Exception as e:
             print(e)
         
     async def client_exists(self,id:str) -> bool:
         user =  await self.find_client(identification=id)
-        print('exist',bool(user))
+        #print('exist',bool(user))
         return bool(user)
 
     

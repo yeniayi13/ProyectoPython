@@ -24,7 +24,8 @@ class Product_postgres_repository(Base_repository,Product_repository):
             return Result.success(new_product)
         except IntegrityError as e:
             print('IntegrityError:',e)
-        print('e: ',e)
+        except Exception as e:
+            print('e: ',e)
         return Result.failure(Error('UnknownError','There is no clue about this error',500))  
         
     async def find_product(self, id:str):

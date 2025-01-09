@@ -20,13 +20,19 @@ class ProductAlchemyRepository(BaseRepository, ProductRepository):
         return [model_to_product(product) for product in products]
 
     async def get_by_id(self, id: UUID) -> Optional[Product]:
-        result = await self.db.execute(select(ProductModel).where(ProductModel.id == id))
-        product = result.scalar_one_or_none()
-        if product is None:
-            return Optional.empty()
-        else:
-            return Optional.of(model_to_product(product))
-
+        try:
+            result = await self.db.execute(select(ProductModel).where(ProductModel.id == id))
+            
+            product = result.scalar_one_or_none()
+            
+            if product is None:
+            
+                return Optional.empty()
+            else:
+            
+                return Optional.of(model_to_product(product))
+        except Exception as e:
+            print('get_by_id e:',e)
     async def create(self, product_data: ProductCreate) -> Product:
         try:
             print(f"Creando producto con los siguientes datos: {product_data.model_dump()}")

@@ -19,18 +19,23 @@ class UpdateProductService(ApplicationService[ProductUpdate, Result[Product]]):
     async def execute(self, data: ProductUpdate) -> Result[Product]:
         try:
             _product =  await self.product_repository.get_by_id(data.id)
+            
             if not _product.value:
                 return Result.failure(Error('ProductNotExist', f'Product with ID {data} does not exist in the system', 409))
+            
             product = await self.product_repository.update(data)
             
             event = {
             'id':str(product.id),
             'name':product.name ,
             'price':product.price,
-            'quantity':product.quantity
+            'quantity':product.quantity,
+            'cost':product.cost
             }
             
-            self.event_handler.publish(event,'products.product_updated','products')            
+            
+            self.event_handler.publish(event,'products.product_updated','products')   
+
             return Result.success(product)
         except Exception as e:
             return Result.failure(Error('Internal Error', f'Error updatting product with ID {data}', 500))

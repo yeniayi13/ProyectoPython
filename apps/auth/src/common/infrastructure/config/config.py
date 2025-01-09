@@ -11,6 +11,12 @@ class Settings(BaseSettings):
     HOST:str
     PORT:str
     DATABASE:str
+    RMQHOST:str
+    CLIENT_CREATED_QUEUE:str
+    MANAGER_CREATED_QUEUE:str
+    SUPERADMIN_CREATED_QUEUE:str
+    CLIENT_MODIFIED_QUEUE:str
+    MANAGER_MODIFIED_QUEUE:str
 
 
     model_config = SettingsConfigDict(
@@ -22,6 +28,6 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def get_settings_auth() -> Settings:
     settings = Settings()
     return settings
