@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_TEST: str
     PORT: int = 8000
+    EVENT_BUS_URL: str
 
     model_config = SettingsConfigDict(
         env_file='.env',

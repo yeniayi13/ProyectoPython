@@ -1,12 +1,14 @@
 import pika
 import pika.exceptions
 import logging
+from src.common.infrastructure.config.config import get_settings
 
-
+settings = get_settings()
+EVENT_BUS_URL = settings.EVENT_BUS_URL
 
 try:
     print('Initializing connection with Message Queues in Product Service')
-    connection_parameters = pika.ConnectionParameters('localhost')
+    connection_parameters = pika.ConnectionParameters(EVENT_BUS_URL)
     connection = pika.BlockingConnection(connection_parameters)
     channel = connection.channel()
 
