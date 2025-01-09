@@ -11,7 +11,8 @@ class Product(Base):
     id = Column(String(250), primary_key = True)
     name = Column(String(30),nullable = False)
     quantity = Column(Integer,nullable = False)
-    price = Column(String(30),nullable = False)
+    price = Column(Float,nullable = False)
+    cost= Column(Float,nullable = False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc), nullable=False)
 

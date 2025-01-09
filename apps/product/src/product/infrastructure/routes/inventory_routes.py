@@ -87,10 +87,11 @@ async def update_quantity_of_product(
     else:
         return result.get_data()
     
-@router.put("/verify_product_quantity/{product_id}/{quantity}",include_in_schema=False)
+@router.put("/verify_product_quantity/{product_id}/{quantity}/{add}",include_in_schema=False)
 async def verify_product_quantitiy(
     product_id: str,
     quantity:int,
+    add:bool,
     response:Response,
     product_repository: ProductRepository = Depends(get_inventory_repository),
     channel = Depends(get_channel),
@@ -117,15 +118,18 @@ async def verify_product_quantitiy(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Producto no encontrado"
         )
-    print(result.get_data())
-    if result.get_data().quantity < quantity:
-        response.status_code = 409
-        return {
-            'code':409,
-            'msg': 'The amount of products available is inferior to what is needed' 
-            } 
-    
-    new_quantity = result.get_data().quantity - quantity
+    if add:
+        #print(result.get_data())
+        if result.get_data().quantity < quantity:
+            response.status_code = 409
+            return {
+                'code':409,
+                'msg': 'The amount of products available is inferior to what is needed' 
+                } 
+        new_quantity = result.get_data().quantity - quantity
+    else:
+        new_quantity = result.get_data().quantity + quantity
+
     event_handler =Pika_event_handler(channel)
     discount_service = UpdateProductService(product_repository, event_handler)
     result = await discount_service.execute(data=ProductUpdate(id=product_id, quantity=new_quantity))
@@ -134,13 +138,17 @@ async def verify_product_quantitiy(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail="No se pudo actualizar el producto"
         )
-    
+    if add:
+        msg='Product can be added to the cart'
+    else:
+        msg='Product quantity modified'
+
     response.status_code = 200
     return {
             'code': 200,
-            'msg': 'Product can be added to the cart' 
+            'msg': msg 
             }
-
+    
 
 
 @router.put("/replenish_products/",include_in_schema=False)

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     DATABASE:str
     PRODUCT_CAN_BE_ADDED_ROUTE:str
     ORDER_CANCELLED_ROUTE:str
+    RMQURL:str
 
 
     model_config = SettingsConfigDict(

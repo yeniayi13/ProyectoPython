@@ -26,7 +26,8 @@ class Replenish_products_service(ApplicationService):
                 'id':str(product.id),
                 'name':product.name ,
                 'price':product.price,
-                'quantity':product.quantity
+                'quantity':product.quantity,
+                'cost':product.cost
                 }
                 self.event_handler.publish(event,'products.product_updated','products')   
                          

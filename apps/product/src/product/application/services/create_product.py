@@ -19,13 +19,15 @@ class CreateProductService(ApplicationService[ProductCreate, Result[Product]]):
     async def execute(self, data: ProductCreate) -> Result[Product]:
         try:
             product = await self.product_repository.create(data)
-
             event = {
             'id':str(product.id),
             'name':product.name ,
             'price':product.price,
-            'quantity':product.quantity
+            'quantity':product.quantity,
+            'cost':product.cost
             }
+            print(event)
+            
             event_result = self.event_handler.publish(event,'products.product_created','products')
             print()
             if event_result :

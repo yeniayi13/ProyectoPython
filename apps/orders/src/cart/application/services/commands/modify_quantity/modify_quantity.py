@@ -33,10 +33,11 @@ class Modify_cart_quantity_service(ApplicationService):
         
         if not (await self.cart_repository.product_already_in_cart(dto.product_id,dto.client_id)):
             return Result.failure(Error('ProductIsNotInTheCart','The product does not exist in the cart, you should add it first',409))
+        
 
-        product_available = await self.request_handler.discount_product_quantity(route=settings.PRODUCT_CAN_BE_ADDED_ROUTE, product_id=dto.product_id, quantity=1)
+        product_available = await self.request_handler.discount_product_quantity(route=settings.PRODUCT_CAN_BE_ADDED_ROUTE, product_id=dto.product_id, quantity=1, add=dto.add)
         if not product_available['code'] ==200:
-            return Result.failure(Error('ProductNotAvailable','The quantity required to satisfy the request does not exist ',409))
+            return Result.failure(Error('ProductNotAvailable','Product is not available in this moment',409))
 
         cart = Cart_in_modify(client_id=dto.client_id,product_id=dto.product_id, add= dto.add)
         result:Result = await self.cart_repository.modify_quantity_in_cart(cart)
