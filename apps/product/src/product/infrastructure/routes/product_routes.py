@@ -92,11 +92,15 @@ async def update_product(
     print(f'El producto a editar es: {product}')
     result = await service.execute(data=product)
     if 'does not exist in the system' in result.get_error_message():
-        print('hello')
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, 
-            detail='Product does not exist in the system'
-        )
+        response.status_code = 409
+        return {
+            'code':409,
+            'msg': result.get_error_message()
+            } 
+        #raise HTTPException(
+        #    status_code=status.HTTP_409_CONFLICT, 
+        #    detail='Product does not exist in the system'
+        #)
     if result.is_error():
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 

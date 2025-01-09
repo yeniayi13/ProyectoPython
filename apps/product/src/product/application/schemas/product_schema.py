@@ -64,3 +64,7 @@ class ProductResponse(Product):
      model_config = ConfigDict(
         from_attributes=True
     )
+
+class Replenish_products_entry(BaseModel):
+    id:str
+    quantity:int

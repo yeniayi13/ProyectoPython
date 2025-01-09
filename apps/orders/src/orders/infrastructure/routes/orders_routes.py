@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.cart.infrastructure.repositories.cart_postgres_repository import Cart_postgres_repository
 from src.common.infrastructure.adapters.JWT_auth_handler import JWT_auth_handler
+from src.common.infrastructure.adapters.httpx_request_handler import Httpx_request_handler
 from src.common.infrastructure.config.database.database import get_db
 from src.common.utils import result
 from src.common.utils.verify_role import verify_roles
@@ -74,6 +75,7 @@ async def cancel_order(
 
     service = Cancel_order_service(
         order_repository=Order_postgrs_repository(session),
+        request_handler= Httpx_request_handler()
     )
     if payload['role'] == 'CLIENT':
         client_id= payload['user_id']

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     HOST:str
     PORT:str
     DATABASE:str
+    PRODUCT_CAN_BE_ADDED_ROUTE:str
+    ORDER_CANCELLED_ROUTE:str
 
 
     model_config = SettingsConfigDict(

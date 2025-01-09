@@ -20,7 +20,7 @@ class JWT_auth_handler(Auth_handler):
     def sign(self, id:str, role:str)->str:
         payload = {
             'user_id' : id,
-            'expires' : time.time() + 5000,
+            'expires' : time.time() + 20000,
             'role': role
             }
         

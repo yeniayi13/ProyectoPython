@@ -1,5 +1,8 @@
+from http.client import HTTPException
+from src.common.infrastructure.adapters.httpx_request_handler import Httpx_request_handler
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
+import httpx
 from src.cart.application.services.commands.add_product.add_product_service import Add_product_service
 from src.cart.application.services.commands.add_product.types.app_product_dto import Add_product_dto
 from src.cart.application.services.commands.delete_product.remove_product_from_cart_service import Remove_product_from_cart_service
@@ -46,7 +49,8 @@ async def add_product(
     service = Add_product_service(
         cart_repository=Cart_postgres_repository(session),
         product_repo= Product_postgres_repository(session),
-        client_repo= Client_postgres_repository(session)
+        client_repo= Client_postgres_repository(session),
+        request_handler= Httpx_request_handler()
     )
     result = await service.execute(dto)
     if result.is_error():
@@ -81,9 +85,11 @@ async def add_one(
 
     dto= Modify_cart_quantity_dto(client_id=client_id, product_id= product_id, add=True)
     
+
     service=Modify_cart_quantity_service(
         cart_repository= Cart_postgres_repository(session),
-        product_repo= Product_postgres_repository(session)
+        product_repo= Product_postgres_repository(session),
+        request_handler= Httpx_request_handler()
     )
     result = await service.execute(dto) 
     if result.is_error():
@@ -189,4 +195,28 @@ async def get_cart(
         response.status_code = result.error.code
         return {'msg': result.get_error_message() } 
     return result.result()
-    
+
+
+
+INVENTORY_URL = "http://localhost:8001/inventories/add_to_cart"
+@cart_routes.get("/test",tags=['cart'])
+async def test_httpx(order_item: str):
+    async with httpx.AsyncClient() as client:
+        try:
+            print(f"{INVENTORY_URL}/{order_item}")
+            print('hola')
+            # Realizar una solicitud al servicio de inventario
+            response = await client.get(f"{INVENTORY_URL}/{order_item}")
+            print(response)
+            inventory_item = response.json()
+            print(inventory_item)
+            
+            # Aquí puedes añadir la lógica para procesar la orden
+            # Por ejemplo, reducir la cantidad del inventario
+            
+            return {"message": "Order created", "inventory": inventory_item}
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(
+                status_code=e.response.status_code,
+                detail=e.response.json().get("detail", "Unknown error")
+            )
