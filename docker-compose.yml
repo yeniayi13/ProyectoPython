@@ -22,8 +22,10 @@ services:
       RABBIT_PASSWORD: ${RABBIT_PASSWORD}
       RABBIT_HOST: ${RABBIT_HOST}
     depends_on:
-      - product-db
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      product-db:
+        condition: service_started
 
   auth-service:
     container_name: auth-service
@@ -49,8 +51,10 @@ services:
       CLIENT_MODIFIED_QUEUE: ${CLIENT_MODIFIED_QUEUE}
       MANAGER_MODIFIED_QUEUE: ${MANAGER_MODIFIED_QUEUE}
     depends_on:
-      - auth-db
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      auth-db:
+        condition: service_started
   
   order-service:
     container_name: order-service
@@ -71,8 +75,10 @@ services:
       ORDER_CANCELLED_ROUTE: ${ORDER_CANCELLED_ROUTE}
       RMQURL: ${RMQURL}
     depends_on:
-      - order-db
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      order-db:
+        condition: service_started
 
   auth-db:
     image: postgres:15-alpine
@@ -116,6 +122,11 @@ services:
       RABBITMQ_DEFAULT_PASS: rabbit123
       RABBITMQ_LOGS: "-"
       RABBITMQ_LOG_LEVEL: debug
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   pgadmin:
     image: dpage/pgadmin4:latest
