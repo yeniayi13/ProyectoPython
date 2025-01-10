@@ -22,7 +22,7 @@ reports_routes = APIRouter(
 auth = JWT_auth_handler()
 
 
-@reports_routes.get('/sales/total',tags=['reports'],include_in_schema=False)
+@reports_routes.get('/sales/total',tags=['reports'])
 async def get_total_sales(
     response:Response,
     session: Session = Depends(get_db), 
@@ -50,7 +50,7 @@ async def get_total_sales(
     }
 
 
-@reports_routes.get('/sales/{product_id}',tags=['reports'],include_in_schema=False)
+@reports_routes.get('/sales/{product_id}',tags=['reports'])
 async def get_sales_by_product(
     product_id,
     response:Response,
@@ -78,7 +78,7 @@ async def get_sales_by_product(
         return {'msg': result.get_error_message() } 
     return result.result()
 
-@reports_routes.get('/profit/total',tags=['reports'],include_in_schema=False)
+@reports_routes.get('/profit/total',tags=['reports'])
 async def get_total_profit(
     response:Response,
     session: Session = Depends(get_db), 
@@ -129,7 +129,7 @@ async def get_product_revenue(
         return {'msg': result.get_error_message() } 
     return result.result()
 
-@reports_routes.get('/products/top',tags=['reports'],include_in_schema=False)
+@reports_routes.get('/products/top',tags=['reports'])
 async def get_top_products(
     response:Response,
     session: Session = Depends(get_db), 
@@ -154,7 +154,7 @@ async def get_top_products(
         return {'msg': result.get_error_message() } 
     return result.result()
 
-@reports_routes.get('/customer/top',tags=['reports'],include_in_schema=False)
+@reports_routes.get('/customer/top',tags=['reports'])
 async def get_customers_top(
     response:Response,
     session: Session = Depends(get_db), 

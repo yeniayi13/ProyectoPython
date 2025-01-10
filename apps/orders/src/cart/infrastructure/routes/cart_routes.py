@@ -199,25 +199,25 @@ async def get_cart(
 
 
 
-INVENTORY_URL = "http://localhost:8001/inventories/add_to_cart"
-@cart_routes.get("/test",tags=['cart'])
-async def test_httpx(order_item: str):
-    async with httpx.AsyncClient() as client:
-        try:
-            print(f"{INVENTORY_URL}/{order_item}")
-            print('hola')
-            # Realizar una solicitud al servicio de inventario
-            response = await client.get(f"{INVENTORY_URL}/{order_item}")
-            print(response)
-            inventory_item = response.json()
-            print(inventory_item)
+# INVENTORY_URL = "http://localhost:8001/inventories/add_to_cart"
+# @cart_routes.get("/test",tags=['cart'])
+# async def test_httpx(order_item: str):
+#     async with httpx.AsyncClient() as client:
+#         try:
+#             print(f"{INVENTORY_URL}/{order_item}")
+#             print('hola')
+#             # Realizar una solicitud al servicio de inventario
+#             response = await client.get(f"{INVENTORY_URL}/{order_item}")
+#             print(response)
+#             inventory_item = response.json()
+#             print(inventory_item)
             
-            # Aquí puedes añadir la lógica para procesar la orden
-            # Por ejemplo, reducir la cantidad del inventario
+#             # Aquí puedes añadir la lógica para procesar la orden
+#             # Por ejemplo, reducir la cantidad del inventario
             
-            return {"message": "Order created", "inventory": inventory_item}
-        except httpx.HTTPStatusError as e:
-            raise HTTPException(
-                status_code=e.response.status_code,
-                detail=e.response.json().get("detail", "Unknown error")
-            )
+#             return {"message": "Order created", "inventory": inventory_item}
+#         except httpx.HTTPStatusError as e:
+#             raise HTTPException(
+#                 status_code=e.response.status_code,
+#                 detail=e.response.json().get("detail", "Unknown error")
+#             )

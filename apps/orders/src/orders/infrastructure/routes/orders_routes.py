@@ -104,7 +104,7 @@ async def complete_order(
 
     payload = info.result()
 
-    if not verify_roles(payload['role'],['CLIENT', 'MANAGER']):
+    if not verify_roles(payload['role'],['MANAGER']):
         response.status_code = 401
         return {'msg': 'This information is not accesible for this user' }
 

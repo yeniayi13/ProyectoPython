@@ -37,7 +37,7 @@ class Httpx_request_handler(Request_handler):
             try:
                 #print('products:', products)
                 response = await client.put(
-                    f"http://localhost:8001/inventories/replenish_products/", 
+                    route, 
                     json=products)
                 #print(client.headers)
                 #print(response.headers)

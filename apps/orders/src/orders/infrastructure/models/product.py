@@ -9,7 +9,7 @@ class Product(Base):
     __tablename__ = 'products'
     
     id = Column(String(250), primary_key = True)
-    name = Column(String(30),nullable = False)
+    name = Column(String(90),nullable = False)
     quantity = Column(Integer,nullable = False)
     price = Column(Float,nullable = False)
     cost= Column(Float,nullable = False)

@@ -2,12 +2,16 @@ import json
 import pika
 import pika.exceptions
 import logging
+from src.common.infrastructure.config.config import get_settings
 from src.common.utils.result import Result
 from src.orders.application.services.listener_services.create_client_service import Create_client_service
 from src.orders.application.services.listener_services.listeners_dtos.create_client_dto import Create_client_dto
 from src.orders.infrastructure.repositories.client_postgres_repository import Client_postgres_repository
 
-connection_parameters = pika.ConnectionParameters('localhost')
+settings = get_settings()
+EVENT_BUS_URL = settings.RMQURL
+
+connection_parameters = pika.ConnectionParameters(EVENT_BUS_URL)
 
 
 #def client_created_callback(ch, method, properties, body):

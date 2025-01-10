@@ -3,10 +3,18 @@ import pika.exceptions
 import logging
 from src.common.infrastructure.config.config import get_settings_auth
 settings =get_settings_auth()
+RABBIT_HOST = settings.RABBIT_HOST
+RABBIT_USER = settings.RABBIT_USER
+RABBIT_PASSWORD = settings.RABBIT_PASSWORD
 
 try:
     print('Initializing connection with Message Queues in Auth')
-    connection_parameters = pika.ConnectionParameters(settings.RMQHOST)
+    credentials = pika.PlainCredentials(RABBIT_USER, RABBIT_PASSWORD)
+    connection_parameters = pika.ConnectionParameters(
+        host=RABBIT_HOST,
+        port=5672,
+        credentials=credentials
+    )
     connection = pika.BlockingConnection(connection_parameters)
     channel = connection.channel()
 

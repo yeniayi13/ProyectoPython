@@ -40,7 +40,7 @@ class Add_product_service(ApplicationService):
         if (await self.cart_repository.product_already_in_cart(dto.product_id, dto.client_id)):
             return Result.failure(Error('ProductAlreadyInTheCart','The product already exists in the cart',409))
 
-        product_available = await self.request_handler.discount_product_quantity(route=settings.PRODUCT_CAN_BE_ADDED_ROUTE, product_id=dto.product_id, quantity=dto.quantity)
+        product_available = await self.request_handler.discount_product_quantity(route=settings.PRODUCT_CAN_BE_ADDED_ROUTE, product_id=dto.product_id, quantity=dto.quantity, add=True)
 
         if  product_available['code'] ==409:
             return Result.failure(Error('ProductNotAvailable','The quantity required to satisfy the request does not exist ',409))

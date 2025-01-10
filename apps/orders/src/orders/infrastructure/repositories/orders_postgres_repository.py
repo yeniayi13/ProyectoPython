@@ -29,7 +29,18 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                     'status':'PENDING'
                 })
 
+                print('************ORDER****************')
+                print(
+                    {
+                    'id':order_id,
+                    'client_id': client_id,
+                    'total_amount':total_amount,
+                    'status':'PENDING'
+                })
+                print('************ORDER****************')
                 self.session.add(instance=order)
+                self.session.flush()
+                print('HIZO FLUSH')
 
                 order_items = [
                     OrderItem(

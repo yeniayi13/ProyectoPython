@@ -17,7 +17,10 @@ services:
       POSTGRES_HOST: ${PRODUCT_POSTGRES_HOST}
       PORT: ${PRODUCT_PORT}
       POSTGRES_DATABASE: ${PRODUCT_POSTGRES_DATABASE}
-      EVENT_BUS_URL: ${EVENT_BUS_URL}
+      POSTGRES_PORT: ${PRODUCT_POSTGRES_PORT}
+      RABBIT_USER: ${RABBIT_USER}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      RABBIT_HOST: ${RABBIT_HOST}
     depends_on:
       - product-db
       - rabbitmq
@@ -29,17 +32,22 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8001:8000"
-    env_file:
-      - .env
     environment:
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       POSTGRES_USER: ${AUTH_POSTGRES_USER}
       PASSWORD: ${AUTH_POSTGRES_PASSWORD}
       HOST: ${AUTH_POSTGRES_HOST}
-      PORT: ${AUTH_PORT}
+      PORT: ${AUTH_POSTGRES_PORT}
       DATABASE: ${AUTH_POSTGRES_DATABASE}
-      EVENT_BUS_URL: ${EVENT_BUS_URL}
+      RABBIT_USER: ${RABBIT_USER}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      RABBIT_HOST: ${RABBIT_HOST}
+      CLIENT_CREATED_QUEUE: ${CLIENT_CREATED_QUEUE}
+      MANAGER_CREATED_QUEUE: ${MANAGER_CREATED_QUEUE}
+      SUPERADMIN_CREATED_QUEUE: ${SUPERADMIN_CREATED_QUEUE}
+      CLIENT_MODIFIED_QUEUE: ${CLIENT_MODIFIED_QUEUE}
+      MANAGER_MODIFIED_QUEUE: ${MANAGER_MODIFIED_QUEUE}
     depends_on:
       - auth-db
       - rabbitmq
@@ -47,7 +55,7 @@ services:
   order-service:
     container_name: order-service
     build:
-      context: ./apps/order
+      context: ./apps/orders
       dockerfile: Dockerfile
     ports:
       - "8002:8000"
@@ -55,13 +63,13 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       POSTGRES_USER: ${ORDER_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${ORDER_POSTGRES_PASSWORD}
-      POSTGRES_HOST: ${ORDER_POSTGRES_HOST}
-      PORT: ${ORDER_PORT}
-      POSTGRES_DATABASE: ${ORDER_POSTGRES_DATABASE}
+      PASSWORD: ${ORDER_POSTGRES_PASSWORD}
+      HOST: ${ORDER_POSTGRES_HOST}
+      PORT: ${ORDER_POSTGRES_PORT}
+      DATABASE: ${ORDER_POSTGRES_DATABASE}
       PRODUCT_CAN_BE_ADDED_ROUTE: ${PRODUCT_CAN_BE_ADDED_ROUTE}
       ORDER_CANCELLED_ROUTE: ${ORDER_CANCELLED_ROUTE}
-      EVENT_BUS_URL: ${EVENT_BUS_URL}
+      RMQURL: ${RMQURL}
     depends_on:
       - order-db
       - rabbitmq
@@ -104,8 +112,10 @@ services:
       - "5672:5672"   # Puerto de conexión de RabbitMQ
       - "15672:15672" # Interfaz de administración web
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: usuario
+      RABBITMQ_DEFAULT_PASS: rabbit123
+      RABBITMQ_LOGS: "-"
+      RABBITMQ_LOG_LEVEL: debug
   
   pgadmin:
     image: dpage/pgadmin4:latest

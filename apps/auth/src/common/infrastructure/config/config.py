@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     HOST:str
     PORT:str
     DATABASE:str
-    RMQHOST:str
+    RABBIT_HOST: str
+    RABBIT_USER: str
+    RABBIT_PASSWORD: str
     CLIENT_CREATED_QUEUE:str
     MANAGER_CREATED_QUEUE:str
     SUPERADMIN_CREATED_QUEUE:str
