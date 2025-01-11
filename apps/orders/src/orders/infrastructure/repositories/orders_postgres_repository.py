@@ -17,7 +17,7 @@ from src.orders.infrastructure.models.product import Product
 class Order_postgrs_repository (Base_repository,Order_repository):
 
     async def create_order(self, client_id:str, products: list[Product_in_order])->Result[str]:
-        total_amount = self.sum_product_prices(products)
+        total_amount = await self.sum_product_prices(products)
         try:
                 order_id=uuid.uuid4()
                 order = Order( )
@@ -29,7 +29,18 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                     'status':'PENDING'
                 })
 
+                print('************ORDER****************')
+                print(
+                    {
+                    'id':order_id,
+                    'client_id': client_id,
+                    'total_amount':total_amount,
+                    'status':'PENDING'
+                })
+                print('************ORDER****************')
                 self.session.add(instance=order)
+                self.session.flush()
+                print('HIZO FLUSH')
 
                 order_items = [
                     OrderItem(
@@ -78,8 +89,11 @@ class Order_postgrs_repository (Base_repository,Order_repository):
             if (order.status == 'CANCELLED'):
                 return Result.failure(Error('OrderStatusIncorrect',f'This order is already cancelled',409))
             order.status = 'CANCELLED'
+            products = await self.get_order(order_id=order_id)
+            #print(products.result())
             self.session.commit()
-            return Result.success(True)
+            
+            return Result.success(products.result())
         except Exception as e:
             print(e)    
             return Result.failure(Error('UnknownError','There is no clue about this error',500))  
@@ -96,7 +110,7 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                 return Result.failure(Error('OrderStatusIncorrect',f'This order is already cancelled, cancelled orders cannot be completed',409))
             order.status = 'COMPLETED'
             self.session.commit()
-            return Result.success(True)
+            return Result.success(order_id)
         except Exception as e:
             print(e)    
             return Result.failure(Error('UnknownError','There is no clue about this error',500))  
@@ -121,6 +135,7 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                 Order.total_amount, 
                 Order.status, 
                 Product.name, 
+                Product.id,
                 OrderItem.quantity
             ).filter(
                 Order.id == OrderItem.order_id, 
@@ -129,7 +144,7 @@ class Order_postgrs_repository (Base_repository,Order_repository):
                 Order.id == order_id  # The specific order you're interested in
             ).all()
 
-            result =self.create_order(result)
+            result = await self.build_order(result)
 
             return Result.success(result)
         except Exception as e:
@@ -162,24 +177,27 @@ class Order_postgrs_repository (Base_repository,Order_repository):
 
 
 
-    def create_order(self, _order):
+    async def build_order(self, _order):
         order={
             'client': f'{_order[0].first_name} {_order[0].last_name}',
             'total':_order[0].total_amount,
             'status':_order[0].status,
             'items':[{
                 'name':'',
-                'quantity':0
+                'quantity':0,
+                'id':''
             }]
         }
+        print(_order)
         products = [{
             'name':res.name,
-            'quantity':res.quantity 
+            'quantity':res.quantity ,
+            'id':res.id
             } 
               for res in _order]
 
         order['items']=products
-        
+        print(products)
         return order
 
     async def find_orders(self, client_id:str):
@@ -203,5 +221,14 @@ class Order_postgrs_repository (Base_repository,Order_repository):
             print('find_orders_postgres e:',e)
             return Result.failure(Error('UnknownError','There is no clue about this error',500))  
 
+    async def verify_order_belongs_to_user(self, order_id:str, client_id:str):
+        try:
+            result = self.session.query(Order).filter(
+                Order.id == order_id, 
+                Order.client_id == client_id 
+            ).first()
+            return bool(result)
+        except Exception as e:
+            print('verify order:',e)
+            return Result.failure(Error('UnknownError','There is no clue about this error',500))  
 
-    

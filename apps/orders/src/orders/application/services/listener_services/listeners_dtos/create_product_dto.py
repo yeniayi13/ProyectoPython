@@ -8,6 +8,7 @@ class Create_product_dto(BaseModel):
     name:str
     price:float
     quantity:int
+    cost:float
 
 
 

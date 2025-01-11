@@ -10,3 +10,4 @@ class Create_client_dto(BaseModel):
     c_i:str
     email:str
 
+

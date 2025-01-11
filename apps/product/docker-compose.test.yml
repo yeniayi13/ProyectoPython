@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  app-test:
+    container_name: product-app-test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    # ports:
+    #   - "8001:8000"
+#     environment:
+#       POSTGRES_USER: test_user
+#       POSTGRES_PASSWORD: test_password
+#       POSTGRES_DATABASE: test_db
+#       POSTGRES_HOST: db-test
+#     volumes:
+#       - .:/app
+#     depends_on:
+#       db-test:
+#         condition: service_healthy # Solo funciona en Docker Compose
+#     networks:
+#       - db-network
+
+#   db-test:
+#     container_name: product-postgres-test-db
+#     image: postgres:15-alpine
+#     restart: always
+#     ports:
+#       - "5433:5432"
+#     environment:
+#       POSTGRES_USER: test_user
+#       POSTGRES_PASSWORD: test_password
+#       POSTGRES_DB: test_db
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U test_user -d test_db"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - db-network
+
+# networks:
+#   db-network:

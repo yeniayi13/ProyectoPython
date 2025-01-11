@@ -41,6 +41,7 @@ class Create_order_service(ApplicationService):
             )
             cart.append(item_response)
         
+        
         result = await self.order_repository.create_order(client_id, cart)
         if result.is_error():
             return result

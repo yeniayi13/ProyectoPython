@@ -1,11 +1,20 @@
 import pika
 import pika.exceptions
 import logging
-
+from src.common.infrastructure.config.config import get_settings_auth
+settings =get_settings_auth()
+RABBIT_HOST = settings.RABBIT_HOST
+RABBIT_USER = settings.RABBIT_USER
+RABBIT_PASSWORD = settings.RABBIT_PASSWORD
 
 try:
     print('Initializing connection with Message Queues in Auth')
-    connection_parameters = pika.ConnectionParameters('localhost')
+    credentials = pika.PlainCredentials(RABBIT_USER, RABBIT_PASSWORD)
+    connection_parameters = pika.ConnectionParameters(
+        host=RABBIT_HOST,
+        port=5672,
+        credentials=credentials
+    )
     connection = pika.BlockingConnection(connection_parameters)
     channel = connection.channel()
 
@@ -15,11 +24,11 @@ try:
                 )
 
 
-    client_created_queue = channel.queue_declare('client_created')
-    manager_created_queue = channel.queue_declare('manager_created')
-    superadmin_created_queue = channel.queue_declare('superadmin_created')
-    client_modified_queue = channel.queue_declare('client_modified')
-    manager_modified_queue = channel.queue_declare('manager_modified')
+    client_created_queue = channel.queue_declare(settings.CLIENT_CREATED_QUEUE)
+    manager_created_queue = channel.queue_declare(settings.MANAGER_CREATED_QUEUE)
+    superadmin_created_queue = channel.queue_declare(settings.SUPERADMIN_CREATED_QUEUE)
+    client_modified_queue = channel.queue_declare(settings.CLIENT_MODIFIED_QUEUE)
+    manager_modified_queue = channel.queue_declare(settings.MANAGER_MODIFIED_QUEUE)
 
     channel.queue_bind(exchange='users', queue=client_created_queue.method.queue,routing_key='users.client_created')
     channel.queue_bind(exchange='users', queue=manager_created_queue.method.queue, routing_key='users.manager_created')

@@ -1,3 +1,5 @@
+from src.common.application.ports.request_handler import Request_handler
+from src.common.infrastructure.config.config import get_settings
 from src.cart.application.repositories.cart_repository import Cart_repository
 from src.cart.application.schemas.cart_schemas import Cart_in_modify
 from src.cart.application.services.commands.add_product.types.app_product_dto import Add_product_dto
@@ -7,7 +9,7 @@ from src.common.utils.result import Result
 from src.common.utils.errors import Error
 from src.orders.application.repositories.product_repository import Product_repository
 
-
+settings =get_settings()
 class Modify_cart_quantity_service(ApplicationService):
 
 
@@ -15,10 +17,13 @@ class Modify_cart_quantity_service(ApplicationService):
             self, 
             cart_repository:Cart_repository,
             product_repo: Product_repository,
+            request_handler: Request_handler
     ):
         super().__init__()
         self.cart_repository = cart_repository
         self.product_repo = product_repo
+        self.request_handler = request_handler
+        
 
 
     
@@ -28,6 +33,11 @@ class Modify_cart_quantity_service(ApplicationService):
         
         if not (await self.cart_repository.product_already_in_cart(dto.product_id,dto.client_id)):
             return Result.failure(Error('ProductIsNotInTheCart','The product does not exist in the cart, you should add it first',409))
+        
+
+        product_available = await self.request_handler.discount_product_quantity(route=settings.PRODUCT_CAN_BE_ADDED_ROUTE, product_id=dto.product_id, quantity=1, add=dto.add)
+        if not product_available['code'] ==200:
+            return Result.failure(Error('ProductNotAvailable','Product is not available in this moment',409))
 
         cart = Cart_in_modify(client_id=dto.client_id,product_id=dto.product_id, add= dto.add)
         result:Result = await self.cart_repository.modify_quantity_in_cart(cart)
@@ -36,9 +46,7 @@ class Modify_cart_quantity_service(ApplicationService):
             return result
         
         if dto.add:
-            print('add')
             return Result.success(f'You added one of the product {dto.product_id} to your cart')
         else:
-            print('remove')
             return Result.success(f'You remove one of the product {dto.product_id} from your cart')   
         

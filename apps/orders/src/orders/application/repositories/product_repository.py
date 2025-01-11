@@ -18,8 +18,8 @@ class Product_repository(ABC):
     def product_exists(id:str):
         pass
 #
-    #
-    #@abstractmethod
-    #def modify_product(id:str,user):
-    #    pass
+    
+    @abstractmethod
+    def modify_product(id:str,user):
+        pass
     

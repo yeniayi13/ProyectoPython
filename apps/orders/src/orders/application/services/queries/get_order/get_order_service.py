@@ -17,38 +17,14 @@ class Get_order_service(ApplicationService):
         
 
     
-    async def execute(self,order_id:str)-> Result :
+    async def execute(self,order_id:str, client_id)-> Result :
         if not (await self.order_repository.order_exists(order_id)):
-            return Result.failure(Error('OrderNotExist','The order you are trying to cancel does not exist in the system',409))
+            return Result.failure(Error('OrderNotExist','The order you are trying to retrieve does not exist in the system',409))
+        if (client_id !=None) and not (await self.order_repository.verify_order_belongs_to_user(order_id, client_id)):
+            return Result.failure(Error('OrderNotBelongTothisUser','The order you are trying to retrieve does not belong to you',409))
         
         result = await self.order_repository.get_order(order_id)
 
-       #print(result.result())
-        
-
-        #if result.is_error():
-        #    return result
-
-        #result = result.result()
-        ##print(result[0].first_name)
-        #order={
-        #    'client': f'{result[0].first_name} {result[0].last_name}',
-        #    'total':result[0].total_amount,
-        #    'status':result[0].status,
-        #    'items':[{
-        #        'name':'',
-        #        'quantity':0
-        #    }]
-        #}
-        #products = [{
-        #    'name':res.name,
-        #    'quantity':res.quantity 
-        #    } 
-        #      for res in result]
-#
-        #order['items']=products
-    
-       # print(order)
         print(result.result())
         print(result)
 

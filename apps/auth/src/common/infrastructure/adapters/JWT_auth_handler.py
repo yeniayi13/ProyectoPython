@@ -1,5 +1,5 @@
+from src.common.infrastructure.config.config import get_settings_auth
 from src.common.application.ports.auth_handler import Auth_handler
-from src.common.infrastructure.config.config import get_settings
 from src.common.utils.errors import Error
 from src.common.utils.result import Result
 import time
@@ -8,7 +8,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 
-settings = get_settings()
+settings = get_settings_auth()
 
 JWT_ALGORITHM = settings.JWT_ALGORITHM
 JWT_SECRET = settings.JWT_SECRET
@@ -20,7 +20,7 @@ class JWT_auth_handler(Auth_handler):
     def sign(self, id:str, role:str)->str:
         payload = {
             'user_id' : id,
-            'expires' : time.time() + 900,
+            'expires' : time.time() + 20000,
             'role': role
             }
         
@@ -38,4 +38,10 @@ class JWT_auth_handler(Auth_handler):
         except Exception as e:
             if 'Signature verification failed' in str(e):
                 return Result.failure(Error('JWTVerificationFailed','Signature verification failed because of an invalid token',401)) 
-            raise e
+            if 'Invalid crypto padding' in str(e):
+                return Result.failure(Error('JWTVerificationFailed','Your JWT token is not complete, check it please',401))  
+            if 'Not enough segments' in str(e):
+                return Result.failure(Error('JWTVerificationFailed','Your JWT token is not complete, check it please',401))  
+            
+            print('decodeJWT e:',e)
+            return Result.failure(Error('UnknownError','There is no clue about this error',500))

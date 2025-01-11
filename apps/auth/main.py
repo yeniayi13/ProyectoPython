@@ -1,4 +1,5 @@
 from src.common.infrastructure.config.database.init_db import create_tables
+from src.common.utils.create_superadmin import create_superadmin_at_start
 from src.auth.infrastructure.routes.auth_routes import auth_router
 from src.user.infrastructure.routes.user_routes import user_routes
 from fastapi import FastAPI
@@ -9,6 +10,7 @@ async def lifespan(app:FastAPI):
     print('initializing Auht DB at start')
     try:
         create_tables()
+        await create_superadmin_at_start()
         yield
     except Exception as e:
         print(e)           

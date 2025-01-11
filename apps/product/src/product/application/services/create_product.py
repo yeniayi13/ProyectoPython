@@ -19,13 +19,15 @@ class CreateProductService(ApplicationService[ProductCreate, Result[Product]]):
     async def execute(self, data: ProductCreate) -> Result[Product]:
         try:
             product = await self.product_repository.create(data)
-
             event = {
             'id':str(product.id),
             'name':product.name ,
             'price':product.price,
-            'quantity':product.quantity
+            'quantity':product.quantity,
+            'cost':product.cost
             }
+            print(event)
+            
             event_result = self.event_handler.publish(event,'products.product_created','products')
             print()
             if event_result :
@@ -35,4 +37,4 @@ class CreateProductService(ApplicationService[ProductCreate, Result[Product]]):
             return Result.success(product)
         except Exception as e:
             print(f"Error al crear el producto: {e}")
-            return Result.failure(Error('Internal Error', f'Error getting products: {str(e)}', 500))
+            return Result.failure(Error('Internal Error', f'Error creating products: {str(e)}', 500))

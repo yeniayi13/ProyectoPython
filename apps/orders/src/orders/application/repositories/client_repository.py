@@ -17,6 +17,6 @@ class Client_repository(ABC):
 
     
     @abstractmethod
-    def modify_client(id:str,user):
+    def modify_client(id:str, client_in_modify):
         pass
     

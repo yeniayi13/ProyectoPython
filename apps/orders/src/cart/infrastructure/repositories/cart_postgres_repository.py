@@ -22,7 +22,9 @@ class Cart_postgres_repository(Base_repository,Cart_repository):
             return Result.success(True)           
 
         except Exception as e:
-            print(e)
+            if '(psycopg2.errors.ForeignKeyViolation)' in str(e):
+                return Result.failure(Error('EventualConsistencyError',' Try to add this product in 5 minutes',500))  
+            print('add_product_to_cart exception:',e)
             return Result.failure(Error('UnknownError','There is no clue about this error',500))  
         
 

@@ -9,7 +9,7 @@ class RoleValidatorService:
 
     def validate_role(self, token: str, allowed_roles: List[str]) -> JWTPayload:
         jwt_payload: JWTPayload = self.token_validator.validate_token(token)
-
+        print(jwt_payload)
         
         # Convertir allowed_roles a instancias de Roles
         allowed_roles_enum = [Roles(role) for role in allowed_roles]
