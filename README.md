@@ -115,14 +115,28 @@ These practices ensure more robust, readable, and maintainable code.
 - `PUT /inventories/{product_id}`: Update inventory
 
 ### Cart Module
-- In progress
+- `POST /cart/add_product`: Add a product to the cart
+- `POST /cart/add_one`: Add one to a product in the cart
+- `POST /cart/remove_one`: Remove one to a product in the cart
+- `POST /cart/add_product`: Add a product to the cart
+- `GET /cart/`: Get the cart
 
 ### Order Module
-- In progress
+- `POST /orders/create`: Create an order
+- `PUT /orders/cancel`: Cancel an order
+- `PUT /orders/complete`: Complete an order
+- `GET /orders/all/`: Get all orders
+- `GET /orders/one/`: Get an order
+
 
 ### Report Module
-- In progress
-
+- `GET /reports/sales/total/`: Get the total amount of sales
+- `GET /reports/sales/{product_id}/`: Get the total amount of sales by a product
+- `GET /reports/profit/total/`: Get the total amount of profit
+- `GET /reports/sales/{product_id}/`: Get the total amount 
+- `GET /reports/products/top/`: Get the top ten most saled products
+- `GET /reports/customer/top/`: Get the top ten customers with more money spent
+ 
 ## Business Rules
 1. Users can only perform actions allowed by their roles.
 2. Products can only be added to the cart if stock is available.
