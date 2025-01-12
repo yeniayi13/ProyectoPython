@@ -133,10 +133,9 @@ These practices ensure more robust, readable, and maintainable code.
 - `GET /reports/sales/total/`: Get the total amount of sales
 - `GET /reports/sales/{product_id}/`: Get the total amount of sales by a product
 - `GET /reports/profit/total/`: Get the total amount of profit
-- `GET /reports/sales/{product_id}/`: Get the total amount 
 - `GET /reports/products/top/`: Get the top ten most saled products
 - `GET /reports/customer/top/`: Get the top ten customers with more money spent
- 
+
 ## Business Rules
 1. Users can only perform actions allowed by their roles.
 2. Products can only be added to the cart if stock is available.
