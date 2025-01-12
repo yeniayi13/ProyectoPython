@@ -165,3 +165,7 @@ cython_debug/
 /consume3.py
 /modify_client.py
 /modify_manager.py
+/env.auth
+/env.orders
+/env.product
+/docker-compose-alf.yml

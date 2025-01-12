@@ -1,0 +1,127 @@
+
+services:
+  auth_service:
+    build:
+      context: ./apps/auth/
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env.auth
+    #environment:
+    #  JWT_SECRET: ${JWT_SECRET}
+    #  JWT_ALGORITHM: ${JWT_ALGORITHM}
+    #  POSTGRES_USER:
+    #  PASSWORD: ${PASSWORD}
+    #  HOST: ${HOST}
+    #  PORT: ${PORT}
+    #  DATABASE: ${DATABASE}
+    #  RMQHOST: ${RMQHOST}
+    #  CLIENT_CREATED_QUEUE: ${CLIENT_CREATED_QUEUE}
+    #  MANAGER_CREATED_QUEUE: ${MANAGER_CREATED_QUEUE}
+    #  SUPERADMIN_CREATED_QUEUE: ${SUPERADMIN_CREATED_QUEUE}
+    #  CLIENT_MODIFIED_QUEUE: ${CLIENT_MODIFIED_QUEUE}
+    #  MANAGER_MODIFIED_QUEUE: ${MANAGER_MODIFIED_QUEUE}
+    depends_on:
+      - auth_DB
+      - rabbitmq
+
+  product_service:
+    build:
+      context: ./apps/product/
+      dockerfile: Dockerfile
+    container_name: product_service
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./.env.product
+    #environment:
+    #  POSTGRES_USER: ${POSTGRES_USER}
+    #  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    #  POSTGRES_HOST: ${POSTGRES_HOST}
+    #  POSTGRES_PORT: ${POSTGRES_PORT}
+    #  POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+    #  JWT_SECRET: ${JWT_SECRET}
+    #  JWT_ALGORITHM: ${JWT_ALGORITHM}
+    #  PORT: ${PORT}
+    #  JWT_TEST: ${JWT_TEST}
+
+    depends_on:
+      - product_DB
+      - rabbitmq
+
+  order_servcie:
+    build:
+      context: ./apps/orders
+      dockerfile: Dockerfile
+    container_name: order_servcie
+    ports:
+      - "8002:8000"
+    env_file:
+      - ./.env.orders
+    #environment:
+    #  JWT_SECRET: ${JWT_SECRET}
+    #  JWT_ALGORITHM: ${JWT_ALGORITHM}
+    #  POSTGRES_USER: ${POSTGRES_USER}
+    #  PASSWORD: ${PASSWORD}
+    #  HOST: ${HOST}
+    #  PORT: ${PORT}
+    #  DATABASE: ${DATABASE}
+    #  PRODUCT_CAN_BE_ADDED_ROUTE: ${PRODUCT_CAN_BE_ADDED_ROUTE}
+    #  ORDER_CANCELLED_ROUTE: ${ORDER_CANCELLED_ROUTE}
+    #  RMQURL: ${RMQURL}
+    depends_on:
+      - order_DB
+      - rabbitmq
+
+  auth_DB:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=auth
+
+  order_DB:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=order
+
+  product_DB:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=product
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=alfonsoasadev@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - "81:80"
